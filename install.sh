@@ -131,12 +131,6 @@ for ARCHIVE in "${ARCHIVES[@]}"; do
   else
     tar -xzf "${TEMP_DIR}/${FILE_NAME}" -C "${TEMP_DIR}"
   fi
-
-  # case "${OS}" in
-  #   linux|darwin) tar -xzf "${TEMP_DIR}/${FILE_NAME}" -C "${TEMP_DIR}" ;;
-  #   # windows)       ;;
-  #   windows)      C:/Windows/system32/tar.exe -xzf "${TEMP_DIR}/${FILE_NAME}" -C "${TEMP_DIR}" ;;
-  # esac
 done
 
 # Install
@@ -170,7 +164,6 @@ done
 
 # End
 end_banner
-
 
 # Dependencies
 dependencies=()
