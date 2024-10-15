@@ -6,6 +6,7 @@ on:
       - master
     paths:
       - install.sh
+      - index.html
       - .github/workflows/get-codex.yml
   workflow_dispatch:
 
