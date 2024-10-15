@@ -1,0 +1,43 @@
+name: Get Codex
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - install.sh
+      - .github/workflows/get-codex.yml
+  workflow_dispatch:
+
+env:
+  folder: site
+
+# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/master'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: '0'
+
+      - name: Prepare file
+        run: |
+          mkdir ${{ env.folder }}
+          cp install.sh index.html ${{ env.folder }}
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.folder }}
+
+      - name: Deploy to GitHub Pages
+        uses: actions/deploy-pages@v4

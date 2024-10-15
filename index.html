@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+      <style>
+        html * {
+          font-size: 14px;
+          line-height: 1.5;
+          color: black;
+          font-family: monospace;
+        }
+      </style>
+  </head>
+
+  <body>
+      <h1>Install Codex</h3>
+
+      <p>
+          <span style="color:grey;">
+              # Install latest Codex
+          </span>
+      <br>
+              curl https://get.codex.storage/install.sh | bash
+      </p>
+
+      <p>
+          <span style="color:grey;">
+              # Install specific version of Codex
+          </span>
+      <br>
+              curl https://get.codex.storage/install.sh | VERSION=0.1.7 bash
+      </p>
+
+      <p>
+          <span style="color:grey;">
+              # Install latest Codex with cirdl
+          </span>
+      <br>
+              curl https://get.codex.storage/install.sh | INSTALL_CIRDL=true bash
+      </p>
+
+      <p>
+          <span style="color:grey;">
+              # On Windows with msys2 install Codex with required libraries
+          </span>
+      <br>
+              curl https://get.codex.storage/install.sh | WINDOWS_LIBS=true INSTALL_CIRDL=true bash
+      </p>
+    </body>
+</html>
