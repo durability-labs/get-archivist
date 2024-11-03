@@ -1,0 +1,11 @@
+# Archives
+*.tar.gz
+*.zip
+
+# Checksums
+*.sha256
+
+# Binaries
+codex-v*
+codex
+cirdl
