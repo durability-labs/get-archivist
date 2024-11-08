@@ -31,25 +31,25 @@ curl -s https://get.codex.storage/install.sh | bash -s help
 
 ```batch
 :: latest version
-curl -s https://get.codex.storage/install.cmd && install.cmd
+curl -sO https://get.codex.storage/install.cmd && install.cmd
 ```
 
 ```batch
 :: specific version
-curl -s https://get.codex.storage/install.cmd && set VERSION=0.1.7 & install.cmd
+curl -sO https://get.codex.storage/install.cmd && set VERSION=0.1.7 & install.cmd
 ```
 
 ```batch
 :: latest codex and cirdl
-curl -s https://get.codex.storage/install.cmd && set INSTALL_CIRDL=true & install.cmd
+curl -sO https://get.codex.storage/install.cmd && set INSTALL_CIRDL=true & install.cmd
 ```
 
 ```batch
 :: codex and cirdl without libraries
-curl -s https://get.codex.storage/install.cmd && set INSTALL_CIRDL=true & set WINDOWS_LIBS=true & install.cmd
+curl -sO https://get.codex.storage/install.cmd && set INSTALL_CIRDL=true & set WINDOWS_LIBS=true & install.cmd
 ```
 
 ```batch
 :: help
-curl -s https://get.codex.storage/install.cmd && install.cmd help
+curl -sO https://get.codex.storage/install.cmd && install.cmd help
 ```
