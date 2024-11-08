@@ -14,7 +14,7 @@
 
     <body>
         <h3>
-                Get Codex
+                Get Codex - Linux/macOS
         </h3>
 
         <p>
@@ -46,7 +46,43 @@
                 # codex and cirdl with required libraries on Windows with msys2
             </span>
             <br>
-                curl -s https://get.codex.storage/install.sh | WINDOWS_LIBS=true INSTALL_CIRDL=true bash
+                curl -s https://get.codex.storage/install.sh | INSTALL_CIRDL=true WINDOWS_LIBS=true bash
         </p>
+        <br>
+        <h3>
+            Get Codex - Windows
+    </h3>
+
+    <p>
+        <span style="color:grey;">
+            # latest version
+        </span>
+        <br>
+            curl -s https://get.codex.storage/install.cmd && install.cmd
+    </p>
+
+    <p>
+        <span style="color:grey;">
+            # specific version
+        </span>
+        <br>
+            curl -s https://get.codex.storage/install.cmd && set VERSION=0.1.7 & install.cmd
+    </p>
+
+    <p>
+        <span style="color:grey;">
+            # latest codex and cirdl
+        </span>
+        <br>
+            curl -s https://get.codex.storage/install.cmd && set INSTALL_CIRDL=true install.cmd
+    </p>
+
+    <p>
+        <span style="color:grey;">
+            # codex and cirdl without libraries
+        </span>
+        <br>
+            curl -s https://get.codex.storage/install.cmd && set INSTALL_CIRDL=true & set WINDOWS_LIBS=false & install.cmd
+    </p>
     </body>
 </html>
