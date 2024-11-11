@@ -34,6 +34,7 @@ if [[ $1 == *"help"* ]] ; then
     ${COMMAND} | CODEX_NAT=1.2.3.4 bash
     ${COMMAND} | CODEX_LOG_LEVEL=debug bash
     ${COMMAND} | CODEX_DATA_DIR=./data CODEX_NAT=1.2.3.4 bash
+    ${COMMAND} | CODEX_DATA_DIR=./data CODEX_NAT=1.2.3.4 bash -s -- --log-level=debug
     ${COMMAND} | bash -s help
 
   \e[33mOptions:\e[0m
