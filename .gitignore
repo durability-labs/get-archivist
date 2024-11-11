@@ -12,3 +12,6 @@ cirdl
 
 # Ethereum keys
 eth.*
+
+# Codex data
+codex-data

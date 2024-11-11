@@ -56,7 +56,7 @@ show_pass() {
 
 show_fail() {
   echo -e "\r\e[1A\e[0K ${FAIL_MARK} ${1}"
-  [[ -n "${2}" ]] && echo -e "\e[31m \n Error: ${2}\e[0m"
+  [[ -n "${2}" ]] && echo -e "\e[31m \n Error: ${2}\e[0m\n"
   exit 1
 }
 
