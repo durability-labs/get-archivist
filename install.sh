@@ -22,13 +22,14 @@ FAIL_MARK="\033[0;31m\u2718\033[0m"
 
 # Help
 if [[ $1 == *"h"* ]] ; then
-  SCRIPT_URL="https://get.codex.storage/install.sh"
+  COMMAND="curl -s https://get.codex.storage/install.sh"
   echo -e "
+  \e[33mInstall Codex\e[0m\n
   \e[33mUsage:\e[0m
-    curl "${SCRIPT_URL}" | bash
-    curl "${SCRIPT_URL}" | VERSION=0.1.7 bash
-    curl "${SCRIPT_URL}" | VERSION=0.1.7 INSTALL_CIRDL=true bash
-    curl "${SCRIPT_URL}" | bash -s help
+    ${COMMAND} | bash
+    ${COMMAND} | VERSION=0.1.7 bash
+    ${COMMAND} | VERSION=0.1.7 INSTALL_CIRDL=true bash
+    ${COMMAND} | bash -s help
 
   \e[33mOptions:\e[0m
     - help                       - show this help
