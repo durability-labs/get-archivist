@@ -9,3 +9,6 @@
 codex-v*
 codex
 cirdl
+
+# Ethereum keys
+eth.*

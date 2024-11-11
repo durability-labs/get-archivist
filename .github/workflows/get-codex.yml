@@ -33,7 +33,13 @@ jobs:
       - name: Prepare file
         run: |
           mkdir ${{ env.folder }}
-          cp install.* index.html ${{ env.folder }}
+          find . -type f \
+            -maxdepth 1 \
+            -name "*.*" \
+            ! -name '*.md' \
+            ! -name ".git*" \
+            ! -name "LICENSE*" \
+            -exec cp {} ${{ env.folder }} \;
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

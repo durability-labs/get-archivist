@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -e
 
 # Install Codex on Linux, macOS, and Windows(msys2)
@@ -22,12 +22,13 @@ FAIL_MARK="\033[0;31m\u2718\033[0m"
 
 # Help
 if [[ $1 == *"h"* ]] ; then
+  SCRIPT_URL="https://get.codex.storage/install.sh"
   echo -e "
   \e[33mUsage:\e[0m
-    curl https://get.codex.storage/`basename $0` | bash
-    curl https://get.codex.storage/`basename $0` | VERSION=0.1.7 bash
-    curl https://get.codex.storage/`basename $0` | VERSION=0.1.7 INSTALL_CIRDL=true bash
-    curl https://get.codex.storage/`basename $0` | bash -s help
+    curl "${SCRIPT_URL}" | bash
+    curl "${SCRIPT_URL}" | VERSION=0.1.7 bash
+    curl "${SCRIPT_URL}" | VERSION=0.1.7 INSTALL_CIRDL=true bash
+    curl "${SCRIPT_URL}" | bash -s help
 
   \e[33mOptions:\e[0m
     - help                       - show this help
@@ -41,7 +42,7 @@ fi
 
 # Show
 show_start() {
-  echo -e "\n \e[4m${1}\e[0m\n"
+  echo -e "\n \e[33m${1}\e[0m\n"
 }
 
 show_progress() {
