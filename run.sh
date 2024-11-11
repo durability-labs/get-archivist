@@ -150,7 +150,6 @@ echo -e "   ${bootstrap_nodes[@]}"
 # Run Codex
 message="Running Codex"
 show_progress "${message}" && show_pass "${message}\n"
-export CODEX_LISTEN_ADDRS="//ip4/0.0.0.0/tcp/8070"
 
 ${CODEX_BINARY} \
   "${bootstrap_nodes[@]}" \
