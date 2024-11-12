@@ -51,7 +51,8 @@ show_progress() {
 }
 
 show_pass() {
-  echo -e "\r\e[1A\e[0K ${PASS_MARK} ${1}"
+  echo -e "\r\e[${TRIM:-1}A\e[0K ${PASS_MARK} ${1}"
+  unset TRIM
 }
 
 show_fail() {
@@ -188,6 +189,7 @@ for BINARY in "${BINARIES[@]}"; do
   message="Installing ${FILE_NAME} to ${INSTALL_PATH}"
   show_progress "${message}"
   if ! (mkdir -p "${INSTALL_DIR}" && install -m 755 "${TEMP_DIR}/${FILE_NAME}" "${INSTALL_PATH}") 2> /dev/null; then
+    $(sudo -n true 2>/dev/null) || TRIM=2
     sudo mkdir -p "${INSTALL_DIR}" && sudo install -m 755 "${TEMP_DIR}/${FILE_NAME}" "${INSTALL_PATH}"
     [[ $? -ne 0 ]] && show_fail "${message}"
   fi
