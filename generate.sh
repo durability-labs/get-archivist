@@ -57,38 +57,53 @@ show_start "Generate Ethereum private key..."
 
 # Generate remote
 generate_remote() {
-message="Generating key using \e[31mremote\e[0m ${URL}"
-show_progress "${message}"
-response=$(curl -m 5 --fail -s ${URL} || true)
-[[ -n "${response}" ]] && show_pass "${message}" || show_fail "${message}" "Failed to connect to ${URL}"
-
-message="Saving private key to file"
-show_progress "${message}"
-if ! (awk -F ': ' '/private/ {print $2}' <<<"${response}" >"${key_file}") >/dev/null 2>&1; then
-  show_fail "${message}" "Failed to save address to file"
-fi
-show_pass "${message}"
-
-message="Saving address to file"
-show_progress "${message}"
-if ! (awk -F ': ' '/address/ {print $2}' <<<"${response}" >"${address_file}") >/dev/null 2>&1; then
-  show_fail "${message}" "Failed to save private key to file"
-fi
-show_pass "${message}"
-
-# Permissions
-  message="Setting private key file permissions"
+  message="Generating key using \e[31mremote\e[0m ${URL}"
   show_progress "${message}"
-  if ! (chmod 600 "${key_file}") >/dev/null 2>&1; then
-    show_fail "${message}" "Failed to set private key file permissions"
+  response=$(curl -m 5 --fail -s ${URL} || true)
+  [[ -n "${response}" ]] && show_pass "${message}" || show_fail "${message}" "Failed to connect to ${URL}"
+
+  message="Saving private key to file"
+  show_progress "${message}"
+  if ! (awk -F ': ' '/private/ {print $2}' <<<"${response}" >"${key_file}") >/dev/null 2>&1; then
+    show_fail "${message}" "Failed to save address to file"
   fi
   show_pass "${message}"
 
-# Show
-address=$(cat ${address_file})
-echo
-echo -e "   - private key - \e[90m${PWD}/\e[0m\e[94m${key_file}\e[0m"
-echo -e "   - address     - \e[90m${PWD}/\e[0m\e[94m${address_file}\e[0m - \e[94m${address}\e[0m\n"
+  message="Saving address to file"
+  show_progress "${message}"
+  if ! (awk -F ': ' '/address/ {print $2}' <<<"${response}" >"${address_file}") >/dev/null 2>&1; then
+    show_fail "${message}" "Failed to save private key to file"
+  fi
+  show_pass "${message}"
+
+  # Permissions
+  message="Setting private key file permissions"
+  show_progress "${message}"
+  case "$(uname -s)" in
+    Linux*)               OS="linux"                                        ;;
+    Darwin*)              OS="darwin"                                       ;;
+    CYGWIN*|MINGW*|MSYS*) OS="windows"                                      ;;
+    *)                    show_fail "${message}" "Unsupported OS: $(uname)" ;;
+  esac
+
+  if [[ $OS == "windows" ]]; then
+    if ! (icacls "${key_file}" /inheritance:r /grant:r `whoami`:F) >/dev/null 2>&1; then
+      show_fail "${message}" "Failed to set private key file permissions"
+    fi
+    show_pass "Setting private key file permissions"
+  else
+    if ! (chmod 600 "${key_file}") >/dev/null 2>&1; then
+      show_fail "${message}" "Failed to set private key file permissions"
+    fi
+    show_pass "${message}"
+  fi
+
+  # Show
+  address=$(cat ${address_file})
+  echo
+  echo -e "   - private key file - \e[90m${PWD}/\e[0m\e[94m${key_file}\e[0m"
+  echo -e "   - address file     - \e[90m${PWD}/\e[0m\e[94m${address_file}\e[0m"
+  echo -e "   - address          - \e[0m\e[94m${address}\e[0m\n"
 }
 
 # Generate locally

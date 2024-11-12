@@ -11,6 +11,9 @@ PASS_MARK="\033[0;32m\u2714\033[0m"
 FAIL_MARK="\033[0;31m\u2718\033[0m"
 NETWORK="${NETWORK:-testnet}"
 
+# Disable argument conversion to Windows path
+export MSYS_NO_PATHCONV=1
+
 export CODEX_DATA_DIR="${CODEX_DATA_DIR:-./codex-data}"
 export CODEX_STORAGE_QUOTA="${CODEX_STORAGE_QUOTA:-10g}"
 export CODEX_NAT="${CODEX_NAT:-$(curl -s https://ip.codex.storage)}"
@@ -97,21 +100,33 @@ fi
 show_pass "${message}"
 
 # Check private key permissions
-message="Checking private key permissions"
+message="Checking private key file permissions"
 show_progress "${message}"
-
-case $(uname) in
-  Linux)                permissions=$(stat -c %a ${CODEX_ETH_PRIVATE_KEY})     ;;
-  Darwin)               permissions=$(stat -f "%OLp" ${CODEX_ETH_PRIVATE_KEY}) ;;
-  CYGWIN*|MINGW*|MSYS*) permissions=$(stat -c %a ${CODEX_ETH_PRIVATE_KEY})     ;;
-  *)                    show_fail "${message}" "Unsupported OS: $(uname)"      ;;
+case "$(uname -s)" in
+  Linux*)               permissions=$(stat -c %a ${CODEX_ETH_PRIVATE_KEY})           ;;
+  Darwin*)              permissions=$(stat -f "%OLp" ${CODEX_ETH_PRIVATE_KEY})       ;;
+  CYGWIN*|MINGW*|MSYS*) permissions=$(icacls ${CODEX_ETH_PRIVATE_KEY}); OS="windows" ;;
+  *)                    show_fail "${message}" "Unsupported OS: $(uname)"            ;;
 esac
 
-if [[ ${permissions} != "600" ]]; then
-  chmod 600 ${CODEX_ETH_PRIVATE_KEY}
-  show_pass "Setting private key permissions"
+if [[ $OS == "windows" ]]; then
+  if ! grep "`whoami`:(F)" <<<"${permissions}" &> /dev/null; then
+    if ! (icacls "${CODEX_ETH_PRIVATE_KEY}" /inheritance:r /grant:r `whoami`:F) >/dev/null 2>&1; then
+      show_fail "${message}" "Failed to set private key file permissions"
+    fi
+    show_pass "Setting private key file permissions"
+  else
+    show_pass "${message}"
+  fi
 else
-  show_pass "${message}"
+  if [[ ${permissions} != "600" ]]; then
+    if ! (chmod 600 "${CODEX_ETH_PRIVATE_KEY}") >/dev/null 2>&1; then
+      show_fail "${message}" "Failed to set private key file permissions"
+    fi
+    show_pass "Setting private key file permissions"
+  else
+    show_pass "${message}"
+  fi
 fi
 
 # Network
