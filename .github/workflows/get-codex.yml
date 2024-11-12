@@ -4,10 +4,11 @@ on:
   push:
     branches:
       - master
-    paths:
-      - install.sh
-      - index.html
-      - .github/workflows/get-codex.yml
+    paths-ignore:
+      - '**/*.md'
+      - '.gitignore'
+      - '.gitattributes'
+      - 'LICENSE*'
   workflow_dispatch:
 
 env:
