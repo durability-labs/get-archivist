@@ -167,7 +167,7 @@ for ARCHIVE in "${ARCHIVES[@]}"; do
 
   if [[ "${OS}" == "windows" ]]; then
     if unzip -v &> /dev/null; then
-      unzip -o "${TEMP_DIR}/${FILE_NAME}" -d "${TEMP_DIR}"
+      unzip -q -o "${TEMP_DIR}/${FILE_NAME}" -d "${TEMP_DIR}"
       [[ $? -ne 0 ]] && show_fail "${message}"
     else
       C:/Windows/system32/tar.exe -xzf "${TEMP_DIR}/${FILE_NAME}" -C "${TEMP_DIR}"
