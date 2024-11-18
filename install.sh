@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -e
 
-# Install Codex on Linux, macOS, and Windows(msys2)
+# Install Codex on Linux, macOS, and Windows (msys2)
 
 # Variables
 VERSION=${VERSION:-latest}
@@ -19,10 +19,11 @@ TEMP_DIR="${TEMP_DIR:-.}"
 PROGRESS_MARK="\033[0;36m\u2022\033[0m"
 PASS_MARK="\033[0;32m\u2714\033[0m"
 FAIL_MARK="\033[0;31m\u2718\033[0m"
+SCRIPT_URL="${SCRIPT_URL:-https://get.codex.storage/install.sh}"
 
 # Help
-if [[ $1 == *"h"* ]] ; then
-  COMMAND="curl -s https://get.codex.storage/install.sh"
+if [[ $1 == *"help"* ]] ; then
+  COMMAND="curl -s ${SCRIPT_URL}"
   echo -e "
   \e[33mInstall Codex\e[0m\n
   \e[33mUsage:\e[0m
@@ -193,6 +194,7 @@ for BINARY in "${BINARIES[@]}"; do
   # Install
   message="Installing ${BINARY_NAME} to ${INSTALL_PATH}"
   show_progress "${message}"
+  [[ -d "${INSTALL_PATH}" ]] && show_fail "${message}" "Installation path ${INSTALL_PATH} is a directory"
   if ! (mkdir -p "${INSTALL_DIR}" && install -m 755 "${TEMP_DIR}/${BINARY_NAME}" "${INSTALL_PATH}") 2> /dev/null; then
     $(sudo -n true 2>/dev/null) || TRIM=2
     sudo mkdir -p "${INSTALL_DIR}" && sudo install -m 755 "${TEMP_DIR}/${BINARY_NAME}" "${INSTALL_PATH}"
@@ -240,7 +242,6 @@ if [[ ${#dependencies[@]} -ne 0 ]]; then
 fi
 
 # Path
-[[ "${INSTALL_DIR}" == "." ]] && INSTALL_DIR=$(pwd)
-if [[ $PATH != *"${INSTALL_DIR}"* ]]; then
+if [[ "${INSTALL_DIR}" != "." && "${PATH}" != *"${INSTALL_DIR}"* ]]; then
   echo -e " Note: Please add install directory '"${INSTALL_DIR}"' to your PATH\n"
 fi

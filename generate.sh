@@ -11,10 +11,11 @@ MODE=${MODE:-remote}
 PROGRESS_MARK="\033[0;36m\u2022\033[0m"
 PASS_MARK="\033[0;32m\u2714\033[0m"
 FAIL_MARK="\033[0;31m\u2718\033[0m"
+SCRIPT_URL="${SCRIPT_URL:-https://get.codex.storage/generate.sh}"
 
 # Help
-if [[ $1 == *"h"* ]] ; then
-  COMMAND="curl -s https://get.codex.storage/generate.sh"
+if [[ $1 == *"help"* ]] ; then
+  COMMAND="curl -s ${SCRIPT_URL}"
   echo -e "
   \e[33mGenerate private key for Ethereum wallet\e[0m\n
   \e[33mUsage:\e[0m
