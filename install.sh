@@ -5,7 +5,7 @@ set -e
 
 # Variables
 VERSION=${VERSION:-latest}
-INSTALL_CIRDL=${INSTALL_CIRDL:-false}
+CIRDL=${CIRDL:-false}
 INSTALL_DIR=${INSTALL_DIR:-/usr/local/bin}
 CODEX_ARCHIVE_PREFIX="codex"
 CIRDL_ARCHIVE_PREFIX="cirdl"
@@ -13,7 +13,7 @@ CODEX_BINARY_PREFIX="codex"
 CIRDL_BINARY_PREFIX="cirdl"
 WINDOWS_LIBS=${WINDOWS_LIBS:-false}
 WINDOWS_LIBS_LIST="libstdc++-6.dll libgomp-1.dll libgcc_s_seh-1.dll libwinpthread-1.dll"
-BASE_URL="https://github.com/codex-storage/nim-codex"
+BASE_URL=${BASE_URL:-https://github.com/codex-storage/nim-codex}
 API_BASE_URL="https://api.github.com/repos/codex-storage/nim-codex"
 TEMP_DIR="${TEMP_DIR:-.}"
 PROGRESS_MARK="\033[0;36m\u2022\033[0m"
@@ -28,15 +28,16 @@ if [[ $1 == *"h"* ]] ; then
   \e[33mUsage:\e[0m
     ${COMMAND} | bash
     ${COMMAND} | VERSION=0.1.7 bash
-    ${COMMAND} | VERSION=0.1.7 INSTALL_CIRDL=true bash
+    ${COMMAND} | VERSION=0.1.7 CIRDL=true bash
     ${COMMAND} | bash -s help
 
   \e[33mOptions:\e[0m
-    - help                       - show this help
-    - VERSION=0.1.7              - codex and cird version to install
-    - INSTALL_CIRDL=true         - install cirdl
-    - INSTALL_DIR=/usr/local/bin - directory to install binaries
-    - WINDOWS_LIBS=true          - download and install archive with libs for windows
+    - help                           - show this help
+    - VERSION=0.1.7                  - codex and cird version to install
+    - CIRDL=true                     - install cirdl
+    - INSTALL_DIR=/usr/local/bin     - directory to install binaries
+    - WINDOWS_LIBS=true              - download and install archive with libs for windows
+    - BASE_URL=http://localhost:8080 - custom base URL for binaries downloading
   "
   exit 0
 fi
@@ -77,8 +78,8 @@ show_progress "${message}"
 # Archives and binaries
 message="Compute archives and binaries names"
 show_progress "${message}"
-[[ "${INSTALL_CIRDL}" == "true" ]] && ARCHIVES=("${CODEX_ARCHIVE_PREFIX}" "${CIRDL_ARCHIVE_PREFIX}") || ARCHIVES=("${CODEX_ARCHIVE_PREFIX}")
-[[ "${INSTALL_CIRDL}" == "true" ]] && BINARIES=("${CODEX_BINARY_PREFIX}" "${CIRDL_BINARY_PREFIX}") || BINARIES=("${CODEX_BINARY_PREFIX}")
+[[ "${CIRDL}" == "true" ]] && ARCHIVES=("${CODEX_ARCHIVE_PREFIX}" "${CIRDL_ARCHIVE_PREFIX}") || ARCHIVES=("${CODEX_ARCHIVE_PREFIX}")
+[[ "${CIRDL}" == "true" ]] && BINARIES=("${CODEX_BINARY_PREFIX}" "${CIRDL_BINARY_PREFIX}") || BINARIES=("${CODEX_BINARY_PREFIX}")
 show_pass "${message}"
 
 # Get the current OS
@@ -126,10 +127,14 @@ fi
 
 # Download
 for ARCHIVE in "${ARCHIVES[@]}"; do
-  FILE_NAME="${ARCHIVE}-${ARCHIVE_SUFFIX}"
+  ARCHIVE_NAME="${ARCHIVE}-${ARCHIVE_SUFFIX}"
 
-  for FILE in "${FILE_NAME}" "${FILE_NAME}.sha256"; do
-    DOWNLOAD_URL="${BASE_URL}/releases/download/${VERSION}/${FILE}"
+  for FILE in "${ARCHIVE_NAME}" "${ARCHIVE_NAME}.sha256"; do
+    if [[ "${BASE_URL}" == *"https://github.com/"* ]]; then
+      DOWNLOAD_URL="${BASE_URL}/releases/download/${VERSION}/${FILE}"
+    else
+      DOWNLOAD_URL="${BASE_URL}/${VERSION}/${FILE}"
+    fi
 
     message="Downloading ${FILE}"
     show_progress "${message}"
@@ -140,41 +145,41 @@ done
 
 # Checksum
 for ARCHIVE in "${ARCHIVES[@]}"; do
-  FILE_NAME="${ARCHIVE}-${ARCHIVE_SUFFIX}"
-  message="Verifying checksum for ${FILE_NAME}"
+  ARCHIVE_NAME="${ARCHIVE}-${ARCHIVE_SUFFIX}"
+  message="Verifying checksum for ${ARCHIVE_NAME}"
   show_progress "${message}"
 
-  EXPECTED_SHA256=$(cat "${TEMP_DIR}/${FILE_NAME}.sha256" | cut -d' ' -f1)
+  EXPECTED_SHA256=$(cat "${TEMP_DIR}/${ARCHIVE_NAME}.sha256" | cut -d' ' -f1)
   if [[ "${OS}" == "darwin" ]]; then
-    ACTUAL_SHA256=$(shasum -a 256 "${TEMP_DIR}/${FILE_NAME}" | cut -d ' ' -f 1)
+    ACTUAL_SHA256=$(shasum -a 256 "${TEMP_DIR}/${ARCHIVE_NAME}" | cut -d ' ' -f 1)
   else
-    ACTUAL_SHA256=$(sha256sum "${TEMP_DIR}/${FILE_NAME}" | cut -d ' ' -f 1)
+    ACTUAL_SHA256=$(sha256sum "${TEMP_DIR}/${ARCHIVE_NAME}" | cut -d ' ' -f 1)
   fi
 
   if [[ "$ACTUAL_SHA256" == "$EXPECTED_SHA256" ]]; then
     show_pass "${message}"
   else
-    show_fail "${message}" "Checksum verification failed for ${FILE_NAME}. Expected: $EXPECTED_SHA256, Got: $ACTUAL_SHA256"
+    show_fail "${message}" "Checksum verification failed for ${ARCHIVE_NAME}. Expected: $EXPECTED_SHA256, Got: $ACTUAL_SHA256"
   fi
 done
 
 # Extract
 for ARCHIVE in "${ARCHIVES[@]}"; do
-  FILE_NAME="${ARCHIVE}-${ARCHIVE_SUFFIX}"
+  ARCHIVE_NAME="${ARCHIVE}-${ARCHIVE_SUFFIX}"
 
-  message="Extracting ${FILE_NAME}"
+  message="Extracting ${ARCHIVE_NAME}"
   show_progress "${message}"
 
   if [[ "${OS}" == "windows" ]]; then
     if unzip -v &> /dev/null; then
-      unzip -q -o "${TEMP_DIR}/${FILE_NAME}" -d "${TEMP_DIR}"
+      unzip -q -o "${TEMP_DIR}/${ARCHIVE_NAME}" -d "${TEMP_DIR}"
       [[ $? -ne 0 ]] && show_fail "${message}"
     else
-      C:/Windows/system32/tar.exe -xzf "${TEMP_DIR}/${FILE_NAME}" -C "${TEMP_DIR}"
+      C:/Windows/system32/tar.exe -xzf "${TEMP_DIR}/${ARCHIVE_NAME}" -C "${TEMP_DIR}"
       [[ $? -ne 0 ]] && show_fail "${message}"
     fi
   else
-    tar -xzf "${TEMP_DIR}/${FILE_NAME}" -C "${TEMP_DIR}"
+    tar -xzf "${TEMP_DIR}/${ARCHIVE_NAME}" -C "${TEMP_DIR}"
     [[ $? -ne 0 ]] && show_fail "${message}"
   fi
   show_pass "${message}"
@@ -182,15 +187,15 @@ done
 
 # Install
 for BINARY in "${BINARIES[@]}"; do
-  FILE_NAME="${BINARY}-${BINARY_SUFFIX}"
+  BINARY_NAME="${BINARY}-${BINARY_SUFFIX}"
   INSTALL_PATH="${INSTALL_DIR}/${BINARY}"
 
   # Install
-  message="Installing ${FILE_NAME} to ${INSTALL_PATH}"
+  message="Installing ${BINARY_NAME} to ${INSTALL_PATH}"
   show_progress "${message}"
-  if ! (mkdir -p "${INSTALL_DIR}" && install -m 755 "${TEMP_DIR}/${FILE_NAME}" "${INSTALL_PATH}") 2> /dev/null; then
+  if ! (mkdir -p "${INSTALL_DIR}" && install -m 755 "${TEMP_DIR}/${BINARY_NAME}" "${INSTALL_PATH}") 2> /dev/null; then
     $(sudo -n true 2>/dev/null) || TRIM=2
-    sudo mkdir -p "${INSTALL_DIR}" && sudo install -m 755 "${TEMP_DIR}/${FILE_NAME}" "${INSTALL_PATH}"
+    sudo mkdir -p "${INSTALL_DIR}" && sudo install -m 755 "${TEMP_DIR}/${BINARY_NAME}" "${INSTALL_PATH}"
     [[ $? -ne 0 ]] && show_fail "${message}"
   fi
   show_pass "${message}"
@@ -210,8 +215,8 @@ fi
 message="Cleanup"
 show_progress "${message}"
 for BINARY in "${BINARIES[@]}"; do
-  FILE_NAME="${BINARY}-${BINARY_SUFFIX}"
-  rm -f "${TEMP_DIR}/${FILE_NAME}"*
+  ARCHIVE_NAME="${BINARY}-${BINARY_SUFFIX}"
+  rm -f "${TEMP_DIR}/${ARCHIVE_NAME}"*
   [[ $? -ne 0 ]] && show_fail "${message}"
 done
 show_pass "${message}"

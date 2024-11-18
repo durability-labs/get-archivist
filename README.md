@@ -14,12 +14,12 @@ curl -s https://get.codex.storage/install.sh | VERSION=0.1.7 bash
 
 ```shell
 # latest codex and cirdl
-curl -s https://get.codex.storage/install.sh | INSTALL_CIRDL=true bash
+curl -s https://get.codex.storage/install.sh | CIRDL=true bash
 ```
 
 ```shell
 # codex and cirdl with required libraries on Windows with msys2
-curl -s https://get.codex.storage/install.sh | INSTALL_CIRDL=true WINDOWS_LIBS=true bash
+curl -s https://get.codex.storage/install.sh | CIRDL=true WINDOWS_LIBS=true bash
 ```
 
 ```shell
@@ -41,12 +41,12 @@ curl -sO https://get.codex.storage/install.cmd && set VERSION=0.1.7 & install.cm
 
 ```batch
 :: latest codex and cirdl
-curl -sO https://get.codex.storage/install.cmd && set INSTALL_CIRDL=true & install.cmd
+curl -sO https://get.codex.storage/install.cmd && set CIRDL=true & install.cmd
 ```
 
 ```batch
 :: codex and cirdl without libraries
-curl -sO https://get.codex.storage/install.cmd && set INSTALL_CIRDL=true & set WINDOWS_LIBS=true & install.cmd
+curl -sO https://get.codex.storage/install.cmd && set CIRDL=true & set WINDOWS_LIBS=true & install.cmd
 ```
 
 ```batch

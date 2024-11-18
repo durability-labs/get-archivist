@@ -4,17 +4,49 @@ setlocal enabledelayedexpansion
 :: Install Codex on Windows
 
 :: Variables
-if not defined VERSION set VERSION=latest
-if not defined INSTALL_CIRDL set INSTALL_CIRDL=false
-if not defined INSTALL_DIR set "INSTALL_DIR=%LOCALAPPDATA%\Codex"
+if defined VERSION (
+  :: Remove trailing spaces
+  for /l %%v in (1,1,100) do if "!VERSION:~-1!"==" " set VERSION=v!VERSION:~0,-1!
+) else (
+  set VERSION=latest
+)
+
+if defined CIRDL (
+  for /l %%v in (1,1,100) do if "!CIRDL:~-1!"==" " set CIRDL=!CIRDL:~0,-1!
+) else (
+  set CIRDL=false
+)
+
+if defined INSTALL_DIR (
+  for /l %%v in (1,1,100) do if "!INSTALL_DIR:~-1!"==" " set INSTALL_DIR=!INSTALL_DIR:~0,-1!
+) else (
+  set "INSTALL_DIR=%LOCALAPPDATA%\Codex"
+)
+
 set CODEX_ARCHIVE_PREFIX=codex
 set CIRDL_ARCHIVE_PREFIX=cirdl
 set CODEX_BINARY_PREFIX=codex
 set CIRDL_BINARY_PREFIX=cirdl
-if not defined WINDOWS_LIBS set WINDOWS_LIBS=true
-set BASE_URL=https://github.com/codex-storage/nim-codex
+
+if defined WINDOWS_LIBS (
+  for /l %%v in (1,1,100) do if "!WINDOWS_LIBS:~-1!"==" " set WINDOWS_LIBS=!WINDOWS_LIBS:~0,-1!
+) else (
+  set WINDOWS_LIBS=true
+)
+
+if defined BASE_URL (
+  for /l %%v in (1,1,100) do if "!BASE_URL:~-1!"==" " set BASE_URL=!BASE_URL:~0,-1!
+) else (
+  set BASE_URL=https://github.com/codex-storage/nim-codex
+)
+
 set API_BASE_URL=https://api.github.com/repos/codex-storage/nim-codex
-if not defined TEMP_DIR set TEMP_DIR=.
+
+if defined TEMP_DIR (
+  for /l %%v in (1,1,100) do if "!TEMP_DIR:~-1!"==" " set TEMP_DIR=!TEMP_DIR:~0,-1!
+) else (
+  set TEMP_DIR=.
+)
 
 :: Colors
 for /f %%a in ('echo prompt $E^| cmd') do set "ESC=%%a"
@@ -26,16 +58,17 @@ if "%1" == "help" (
   set URL=https://get.codex.storage/!SCRIPT_NAME!
   set "COMMAND=curl -sO !URL!"
   echo   !COMMAND! ^&^& !SCRIPT_NAME!
-  echo   !COMMAND! ^&^& set VERSION=0.1.7 ^& set INSTALL_CIRDL=true ^& !SCRIPT_NAME!
+  echo   !COMMAND! ^&^& set VERSION=0.1.7 ^& set CIRDL=true ^& !SCRIPT_NAME!
   echo   !COMMAND! ^&^& set VERSION=0.1.7 ^& set WINDOWS_LIBS=false ^& !SCRIPT_NAME!
   echo   !COMMAND! ^&^& set VERSION=0.1.7 ^& set "INSTALL_DIR=C:\Program Files\Codex" ^& !SCRIPT_NAME!
   echo.
   echo %ESC%[93mOptions:%ESC%[%m
   echo   - help                                 - show this help
   echo   - VERSION=0.1.7                        - codex and cird version to install
-  echo   - INSTALL_CIRDL=true                   - install cirdl
+  echo   - CIRDL=true                           - install cirdl
   echo   - "INSTALL_DIR=C:\Program Files\Codex" - directory to install binaries
   echo   - WINDOWS_LIBS=false                   - download and install archive without the libs
+  echo   - BASE_URL=http://localhost:8080       - custom base URL for binaries downloading
   exit /b 0
 )
 
@@ -80,18 +113,13 @@ set message="Computing version"
 call :show_progress %message%
 if "%VERSION%" == "latest" (
   for /f delims^=^"^ tokens^=4 %%v in ('curl -Ls %API_BASE_URL%/releases/latest ^| find "tag_name"') do set VERSION=%%v
-) else (
-  ::: Remove trailing spaces
-  for /l %%v in (1,1,100) do if "!VERSION:~-1!"==" " set VERSION=v!VERSION:~0,-1!
 )
 
 :: Archives and binaries
 set message="Computing archives and binaries names"
 call :show_progress %message%
-::: Remove trailing spaces
-for /l %%v in (1,1,100) do if "!INSTALL_CIRDL:~-1!"==" " set INSTALL_CIRDL=!INSTALL_CIRDL:~0,-1!
 ::: Set variables
-if "%INSTALL_CIRDL%" == "true" (
+if "%CIRDL%" == "true" (
   set "ARCHIVES=%CODEX_ARCHIVE_PREFIX% %CIRDL_ARCHIVE_PREFIX%"
   set "BINARIES=%CODEX_BINARY_PREFIX% %CIRDL_BINARY_PREFIX%"
 ) else (
@@ -139,7 +167,13 @@ for %%f in (%ARCHIVES%) do (
 
   for %%f in (!ARCHIVE_NAME! !ARCHIVE_NAME!.sha256) do (
     set ARCHIVE=%%f
-    set DOWNLOAD_URL=!BASE_URL!/releases/download/!VERSION!/!ARCHIVE!
+    echo %BASE_URL% | find /i "https://github.com/" >nul
+    if !errorlevel! equ 0 (
+      set DOWNLOAD_URL=%BASE_URL%/releases/download/%VERSION%/!ARCHIVE!
+    ) else (
+      set DOWNLOAD_URL=%BASE_URL%/%VERSION%/!ARCHIVE!
+    )
+
     set message="Downloading !ARCHIVE!"
     call :show_progress !message!
     @rem we can't rely on http_code - https://github.com/curl/curl/issues/13845
@@ -169,6 +203,7 @@ for %%f in (%ARCHIVES%) do (
 :: Create directory
 set message="Creating installation directory %INSTALL_DIR%"
 call :show_progress !message!
+echo "INSTALL_DIR - %INSTALL_DIR%"
 if not exist %INSTALL_DIR% mkdir %INSTALL_DIR%
 if not !errorlevel! == 0 (
   call :show_fail !message! "Failed to create %INSTALL_DIR%"
@@ -230,6 +265,6 @@ if not %errorlevel% equ 0 (
   @rem setx PATH "%PATH%%INSTALL_DIR;" >nul 2>&1
 )
 
-:: Delete
+:: Self delete
 :delete
 goto 2>nul & del "%~f0"
