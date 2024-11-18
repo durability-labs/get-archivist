@@ -1,4 +1,4 @@
-# Get Codex
+## Get Codex
 
 ### Linux, macOS and Windows (msys2)
 
@@ -29,27 +29,42 @@ curl -s https://get.codex.storage/install.sh | bash -s help
 
 ### Windows
 
-```batch
+```cmd
 :: latest version
 curl -sO https://get.codex.storage/install.cmd && install.cmd
 ```
 
-```batch
+```cmd
 :: specific version
 curl -sO https://get.codex.storage/install.cmd && set VERSION=0.1.7 & install.cmd
 ```
 
-```batch
+```cmd
 :: latest codex and cirdl
 curl -sO https://get.codex.storage/install.cmd && set CIRDL=true & install.cmd
 ```
 
-```batch
+```cmd
 :: codex and cirdl without libraries
 curl -sO https://get.codex.storage/install.cmd && set CIRDL=true & set WINDOWS_LIBS=true & install.cmd
 ```
 
-```batch
+```cmd
 :: help
 curl -sO https://get.codex.storage/install.cmd && install.cmd help
+```
+
+
+## Join Codex Testnet
+
+### Linux, macOS and Windows (msys2)
+```shell
+# Install Codex
+curl -s https://get.codex.storage/testnet/install.sh | bash
+
+# Generate key
+curl -s https://get.codex.storage/testnet/generate.sh | bash
+
+# Run Codex
+curl -s https://get.codex.storage/testnet/run.sh | bash
 ```
