@@ -34,13 +34,15 @@ jobs:
       - name: Prepare file
         run: |
           mkdir ${{ env.folder }}
-          find . -type f \
+          find . \
             -maxdepth 1 \
-            -name "*.*" \
+            -mindepth 1 \
+            ! -name site \
+            ! -name CNAME \
             ! -name '*.md' \
             ! -name ".git*" \
             ! -name "LICENSE*" \
-            -exec cp {} ${{ env.folder }} \;
+            -exec cp -r {} ${{ env.folder }} \;
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
