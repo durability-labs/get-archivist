@@ -203,7 +203,6 @@ for %%f in (%ARCHIVES%) do (
 :: Create directory
 set message="Creating installation directory %INSTALL_DIR%"
 call :show_progress !message!
-echo "INSTALL_DIR - %INSTALL_DIR%"
 if not exist %INSTALL_DIR% mkdir %INSTALL_DIR%
 if not !errorlevel! == 0 (
   call :show_fail !message! "Failed to create %INSTALL_DIR%"
