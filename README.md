@@ -58,18 +58,22 @@ curl -sO https://get.codex.storage/install.cmd && install.cmd help
 ## Join Codex Testnet
 
 ### Linux, macOS and Windows (msys2)
+
 ```shell
 # Create a directory
-mkdir codex-testnet && codex-testnet
+mkdir codex-testnet && cd codex-testnet
 ```
+
 ```shell
 # Install Codex
 curl -s https://get.codex.storage/testnet/install.sh | bash
 ```
+
 ```shell
 # Generate key
 curl -s https://get.codex.storage/testnet/generate.sh | bash
 ```
+
 ```shell
 # Run Codex
 curl -s https://get.codex.storage/testnet/run.sh | bash
