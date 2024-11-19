@@ -10,7 +10,7 @@ PROGRESS_MARK="\033[0;36m\u2022\033[0m"
 PASS_MARK="\033[0;32m\u2714\033[0m"
 FAIL_MARK="\033[0;31m\u2718\033[0m"
 SCRIPT_URL="${SCRIPT_URL:-https://get.codex.storage/run.sh}"
-SCRIPT_BASE_URL=$(sed 's/\/[a-z.]\+$//'<<<"${SCRIPT_URL}")
+SCRIPT_BASE_URL=$(sed 's|/[a-z]*\.[a-z]*$||'<<<"${SCRIPT_URL}")
 
 # Disable argument conversion to Windows path
 export MSYS_NO_PATHCONV=1
@@ -39,22 +39,22 @@ if [[ $1 == *"help"* ]] ; then
     ${COMMAND} | CODEX_DATA_DIR=./data CODEX_NAT=1.2.3.4 bash -s -- --log-level=debug
     ${COMMAND} | bash -s help
 
-  \e[33mOptions:\e[0m
-    - help                      - show this help
+  \e[33mVariables:\e[0m
     - CODEX_BINARY              - The Codex binary to run [codex].
-    - CODEX_DATA_DIR=./data     - The directory where codex will store configuration and data [./codex-data].
-    - CODEX_STORAGE_QUOTA=10g   - The size of the total storage quota dedicated to the node [=10g].
-    - CODEX_NAT=1.2.3.4         - IP Addresses to announce behind a NAT [=127.0.0.1].
+    - CODEX_DATA_DIR            - The directory where codex will store configuration and data [=./codex-data].
+    - CODEX_STORAGE_QUOTA       - The size of the total storage quota dedicated to the node [=10g].
+    - CODEX_NAT                 - IP Addresses to announce behind a NAT [=127.0.0.1].
     - CODEX_API_PORT            - The REST Api port[=8080].
     - CODEX_DISC_PORT           - Discovery (UDP) port [=8090].
     - CODEX_LISTEN_ADDRS        - Multi Addresses to listen on [=/ip4/0.0.0.0/tcp/8070].
-    - CODEX_API_CORS_ORIGIN     - The REST Api CORS allowed origin for downloading data [*].
+    - CODEX_API_CORS_ORIGIN     - The REST Api CORS allowed origin for downloading data [=*].
     - CODEX_BLOCK_TTL           - Default block timeout in seconds - 0 disables the ttl [=30d].
     - CODEX_LOG_LEVEL           - Sets the log level [=info].
     - CODEX_ETH_PRIVATE_KEY     - File containing Ethereum private key for storage contracts.
     - CODEX_ETH_PROVIDER        - The URL of the JSON-RPC API of the Ethereum node [=https://rpc.testnet.codex.storage].
     - CODEX_MARKETPLACE_ADDRESS - Address of deployed Marketplace contract.
-    - codex --help              - show all codex cli arguments
+
+      run 'codex --help' for all CLI arguments and appropriate environment variables.
   "
   exit 0
 fi

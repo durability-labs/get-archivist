@@ -32,8 +32,7 @@ if [[ $1 == *"help"* ]] ; then
     ${COMMAND} | VERSION=0.1.7 CIRDL=true bash
     ${COMMAND} | bash -s help
 
-  \e[33mOptions:\e[0m
-    - help                           - show this help
+  \e[33mVariables:\e[0m
     - VERSION=0.1.7                  - codex and cird version to install
     - CIRDL=true                     - install cirdl
     - INSTALL_DIR=/usr/local/bin     - directory to install binaries

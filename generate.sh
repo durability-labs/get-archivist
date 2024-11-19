@@ -25,8 +25,7 @@ if [[ $1 == *"help"* ]] ; then
     ${COMMAND} | URL=https://key.codex.storage bash
     ${COMMAND} | bash -s help
 
-  \e[33mOptions:\e[0m
-    - help                          - Show help message
+  \e[33mVariables:\e[0m
     - MODE=local                    - Generate key locally
     - ETH_PRIVATE_KEY=0x...         - Use provided private key
     - URL=https://key.codex.storage - Key generation service URL

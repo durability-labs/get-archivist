@@ -62,8 +62,7 @@ if "%1" == "help" (
   echo   !COMMAND! ^&^& set VERSION=0.1.7 ^& set WINDOWS_LIBS=false ^& !SCRIPT_NAME!
   echo   !COMMAND! ^&^& set VERSION=0.1.7 ^& set "INSTALL_DIR=C:\Program Files\Codex" ^& !SCRIPT_NAME!
   echo.
-  echo %ESC%[93mOptions:%ESC%[%m
-  echo   - help                                 - show this help
+  echo %ESC%[93mVariables:%ESC%[%m
   echo   - VERSION=0.1.7                        - codex and cird version to install
   echo   - CIRDL=true                           - install cirdl
   echo   - "INSTALL_DIR=C:\Program Files\Codex" - directory to install binaries
