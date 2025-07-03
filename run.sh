@@ -51,10 +51,6 @@ done
 
 # Marketplace address from URL
 if [[ ( -z "${CODEX_MARKETPLACE_ADDRESS}" || "$@" != *"--marketplace-address"* ) && -n "${MARKETPLACE_ADDRESS_FROM_URL}" ]]; then
-
-  echo "args - $@"
-  echo "CODEX_MARKETPLACE_ADDRESS - $CODEX_MARKETPLACE_ADDRESS"
-  echo "MARKETPLACE_ADDRESS_FROM_URL - $MARKETPLACE_ADDRESS_FROM_URL"
   WAIT=60
   SECONDS=0
   SLEEP=1
