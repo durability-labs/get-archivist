@@ -78,3 +78,28 @@ curl -s https://get.codex.storage/testnet/generate.sh | bash
 # Run Codex
 curl -s https://get.codex.storage/testnet/run.sh | bash
 ```
+
+
+## Join Codex Devnet
+
+### Linux, macOS and Windows (msys2)
+
+```shell
+# Create a directory
+mkdir codex-devnet && cd codex-devnet
+```
+
+```shell
+# Install Codex
+curl -s https://get.codex.storage/devnet/install.sh | bash
+```
+
+```shell
+# Generate key
+curl -s https://get.codex.storage/devnet/generate.sh | bash
+```
+
+```shell
+# Run Codex
+curl -s https://get.codex.storage/devnet/run.sh | bash
+```

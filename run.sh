@@ -28,7 +28,7 @@ export CODEX_ETH_PRIVATE_KEY="${CODEX_ETH_PRIVATE_KEY:-eth.key}"
 export CODEX_ETH_PROVIDER="${CODEX_ETH_PROVIDER:-https://rpc.testnet.codex.storage}"
 [[ -n "${CODEX_MARKETPLACE_ADDRESS}" ]] && export CODEX_MARKETPLACE_ADDRESS="${CODEX_MARKETPLACE_ADDRESS}"
 
-# Default bootstrap nodes
+# Bootstrap node from URL
 BOOTSTRAP_NODE_FROM_URL="${BOOTSTRAP_NODE_FROM_URL:-https://spr.codex.storage/testnet}"
 WAIT=60
 SECONDS=0
@@ -48,6 +48,29 @@ while (( SECONDS < WAIT )); do
     sleep $SLEEP
   fi
 done
+
+# Marketplace address from URL
+if [[ ( -z "${CODEX_MARKETPLACE_ADDRESS}" || "$@" != *"--marketplace-address"* ) && -n "${MARKETPLACE_ADDRESS_FROM_URL}" ]]; then
+
+  echo "args - $@"
+  echo "CODEX_MARKETPLACE_ADDRESS - $CODEX_MARKETPLACE_ADDRESS"
+  echo "MARKETPLACE_ADDRESS_FROM_URL - $MARKETPLACE_ADDRESS_FROM_URL"
+  WAIT=60
+  SECONDS=0
+  SLEEP=1
+  while (( SECONDS < WAIT )); do
+    set +e
+    MARKETPLACE_ADDRESS=($(curl -s -f -m 5 "${MARKETPLACE_ADDRESS_FROM_URL}"))
+    set -e
+    if [[ $? -eq 0 && -n "${MARKETPLACE_ADDRESS}" ]]; then
+      export CODEX_MARKETPLACE_ADDRESS="${MARKETPLACE_ADDRESS}"
+      break
+    else
+      echo "Can't get Marketplace address from ${MARKETPLACE_ADDRESS_FROM_URL} - Retry in $SLEEP seconds / $((WAIT - SECONDS))"
+      sleep $SLEEP
+    fi
+  done
+fi
 
 # Help
 if [[ $1 == *"help"* ]] ; then
@@ -168,5 +191,5 @@ message="Running Codex"
 show_progress "${message}" && show_pass "${message}\n"
 
 ${CODEX_BINARY} \
-  $@ \
-  persistence
+  persistence \
+  $@
