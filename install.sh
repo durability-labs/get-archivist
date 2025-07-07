@@ -15,11 +15,24 @@ WINDOWS_LIBS=${WINDOWS_LIBS:-false}
 WINDOWS_LIBS_LIST="libstdc++-6.dll libgomp-1.dll libgcc_s_seh-1.dll libwinpthread-1.dll"
 BASE_URL=${BASE_URL:-https://github.com/codex-storage/nim-codex}
 API_BASE_URL="https://api.github.com/repos/codex-storage/nim-codex"
+BRANCH="${BRANCH:-master}"
 TEMP_DIR="${TEMP_DIR:-.}"
 PROGRESS_MARK="\033[0;36m\u2022\033[0m"
 PASS_MARK="\033[0;32m\u2714\033[0m"
 FAIL_MARK="\033[0;31m\u2718\033[0m"
 SCRIPT_URL="${SCRIPT_URL:-https://get.codex.storage/install.sh}"
+
+# Debug
+if [[ "${DEBUG:-false}" == "true" ]]; then
+  echo -e "\n \e[33mVariables:\e[0m"
+  echo "  VERSION: ${VERSION}"
+  echo "  CIRDL: ${CIRDL}"
+  echo "  INSTALL_DIR: ${INSTALL_DIR}"
+  echo "  BRANCH: ${BRANCH}"
+  echo "  TEMP_DIR: ${TEMP_DIR}"
+  echo "  BASE_URL: ${BASE_URL}"
+  echo "  SCRIPT_URL: ${SCRIPT_URL}"
+fi
 
 # Help
 if [[ $1 == *"help"* ]] ; then
@@ -33,11 +46,12 @@ if [[ $1 == *"help"* ]] ; then
     ${COMMAND} | bash -s help
 
   \e[33mVariables:\e[0m
-    - VERSION=0.1.7                  - codex and cird version to install
-    - CIRDL=true                     - install cirdl
-    - INSTALL_DIR=/usr/local/bin     - directory to install binaries
-    - WINDOWS_LIBS=true              - download and install archive with libs for windows
-    - BASE_URL=http://localhost:8080 - custom base URL for binaries downloading
+    - VERSION=0.1.7                         - codex and cird version to install
+    - CIRDL=true                            - install cirdl
+    - INSTALL_DIR=/usr/local/bin            - directory to install binaries
+    - WINDOWS_LIBS=true                     - download and install archive with libs for windows
+    - BASE_URL=https://builds.codex.storage - custom base URL for binaries downloading
+    - BRANCH=fix/custom-branch              - custom branch builds
   "
   exit 0
 fi
@@ -72,7 +86,23 @@ show_start "Installing Codex..."
 # Version
 message="Compute version"
 show_progress "${message}"
-[[ "${VERSION}" == "latest" ]] && VERSION=$(curl -s ${API_BASE_URL}/releases/latest | grep tag_name | cut -d '"' -f 4) || VERSION="v${VERSION}"
+if [[ "${BASE_URL}" == *"https://github.com/"* ]]; then
+  if [[ "${VERSION}" == "latest" ]]; then
+    VERSION=$(curl -s "${API_BASE_URL}/releases/latest" | grep tag_name | cut -d '"' -f 4)
+  else
+    VERSION="v${VERSION}"
+  fi
+else
+  if [[ "${BRANCH}" == "releases" ]]; then
+    if [[ "${VERSION}" == "latest" ]]; then
+      VERSION=$(curl -s "${BASE_URL}/${BRANCH}/latest")
+    else
+      VERSION="v${VERSION}"
+    fi
+  else
+    VERSION="${BRANCH/\//-}"
+  fi
+fi
 [[ $? -eq 0 ]] && show_pass "${message}" || show_fail "${message}"
 
 # Archives and binaries
@@ -133,7 +163,13 @@ for ARCHIVE in "${ARCHIVES[@]}"; do
     if [[ "${BASE_URL}" == *"https://github.com/"* ]]; then
       DOWNLOAD_URL="${BASE_URL}/releases/download/${VERSION}/${FILE}"
     else
-      DOWNLOAD_URL="${BASE_URL}/${VERSION}/${FILE}"
+      if [[ "${BRANCH}" == "releases" ]]; then
+        DOWNLOAD_URL="${BASE_URL}/${BRANCH}/${VERSION}/${FILE}"
+      elif [[ "${BRANCH}" == "master" ]]; then
+        DOWNLOAD_URL="${BASE_URL}/${BRANCH}/${FILE}"
+      else
+        DOWNLOAD_URL="${BASE_URL}/branches/${FILE}"
+      fi
     fi
 
     message="Downloading ${FILE}"
