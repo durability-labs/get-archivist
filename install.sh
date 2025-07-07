@@ -168,7 +168,7 @@ for ARCHIVE in "${ARCHIVES[@]}"; do
       elif [[ "${BRANCH}" == "master" ]]; then
         DOWNLOAD_URL="${BASE_URL}/${BRANCH}/${FILE}"
       else
-        DOWNLOAD_URL="${BASE_URL}/branches/${FILE}"
+        DOWNLOAD_URL="${BASE_URL}/branches/${VERSION}/${FILE}"
       fi
     fi
 
