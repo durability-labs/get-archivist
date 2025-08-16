@@ -1,9 +1,9 @@
-# Codex Testnet - Install
+# Archivist Testnet - Install
 
 # Variables
 set -a
-BASE_SCRIPT="https://get.codex.storage/install.sh"
-SCRIPT_URL="https://get.codex.storage/testnet/install.sh"
+BASE_SCRIPT="https://get.archivist.storage/install.sh"
+SCRIPT_URL="https://get.archivist.storage/testnet/install.sh"
 INSTALL_DIR="${INSTALL_DIR:-.}"
 set +a
 

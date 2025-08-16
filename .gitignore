@@ -6,12 +6,12 @@
 *.sha256
 
 # Binaries
-codex-v*
-codex
+archivist-v*
+archivist
 cirdl
 
 # Ethereum keys
 eth.*
 
-# Codex data
-codex-data
+# Archivist data
+archivist-data

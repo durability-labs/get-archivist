@@ -1,9 +1,9 @@
-# Codex Testnet - Generate
+# Archivist Testnet - Generate
 
 # Variables
 set -a
-BASE_SCRIPT="https://get.codex.storage/generate.sh"
-SCRIPT_URL="https://get.codex.storage/testnet/generate.sh"
+BASE_SCRIPT="https://get.archivist.storage/generate.sh"
+SCRIPT_URL="https://get.archivist.storage/testnet/generate.sh"
 set +a
 
 # Help
