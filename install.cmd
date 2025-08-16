@@ -1,7 +1,7 @@
 @echo off
 setlocal enabledelayedexpansion
 
-:: Install Codex on Windows
+:: Install Archivist on Windows
 
 :: Variables
 if defined VERSION (
@@ -20,12 +20,12 @@ if defined CIRDL (
 if defined INSTALL_DIR (
   for /l %%v in (1,1,100) do if "!INSTALL_DIR:~-1!"==" " set INSTALL_DIR=!INSTALL_DIR:~0,-1!
 ) else (
-  set "INSTALL_DIR=%LOCALAPPDATA%\Codex"
+  set "INSTALL_DIR=%LOCALAPPDATA%\Archivist"
 )
 
-set CODEX_ARCHIVE_PREFIX=codex
+set ARCHIVIST_ARCHIVE_PREFIX=archivist
 set CIRDL_ARCHIVE_PREFIX=cirdl
-set CODEX_BINARY_PREFIX=codex
+set ARCHIVIST_BINARY_PREFIX=archivist
 set CIRDL_BINARY_PREFIX=cirdl
 
 if defined WINDOWS_LIBS (
@@ -37,10 +37,10 @@ if defined WINDOWS_LIBS (
 if defined BASE_URL (
   for /l %%v in (1,1,100) do if "!BASE_URL:~-1!"==" " set BASE_URL=!BASE_URL:~0,-1!
 ) else (
-  set BASE_URL=https://github.com/codex-storage/nim-codex
+  set BASE_URL=https://github.com/durability-labs/archivist-node
 )
 
-set API_BASE_URL=https://api.github.com/repos/codex-storage/nim-codex
+set API_BASE_URL=https://api.github.com/repos/durability-labs/archivist-node
 
 if defined TEMP_DIR (
   for /l %%v in (1,1,100) do if "!TEMP_DIR:~-1!"==" " set TEMP_DIR=!TEMP_DIR:~0,-1!
@@ -55,19 +55,19 @@ for /f %%a in ('echo prompt $E^| cmd') do set "ESC=%%a"
 if "%1" == "help" (
   echo %ESC%[93mUsage:%ESC%[%m
   set SCRIPT_NAME=%~n0%~x0
-  set URL=https://get.codex.storage/!SCRIPT_NAME!
+  set URL=https://get.archivist.storage/!SCRIPT_NAME!
   set "COMMAND=curl -sO !URL!"
   echo   !COMMAND! ^&^& !SCRIPT_NAME!
   echo   !COMMAND! ^&^& set VERSION=0.1.7 ^& set CIRDL=true ^& !SCRIPT_NAME!
   echo   !COMMAND! ^&^& set VERSION=0.1.7 ^& set WINDOWS_LIBS=false ^& !SCRIPT_NAME!
-  echo   !COMMAND! ^&^& set VERSION=0.1.7 ^& set "INSTALL_DIR=C:\Program Files\Codex" ^& !SCRIPT_NAME!
+  echo   !COMMAND! ^&^& set VERSION=0.1.7 ^& set "INSTALL_DIR=C:\Program Files\Archivist" ^& !SCRIPT_NAME!
   echo.
   echo %ESC%[93mVariables:%ESC%[%m
-  echo   - VERSION=0.1.7                        - codex and cird version to install
-  echo   - CIRDL=true                           - install cirdl
-  echo   - "INSTALL_DIR=C:\Program Files\Codex" - directory to install binaries
-  echo   - WINDOWS_LIBS=false                   - download and install archive without the libs
-  echo   - BASE_URL=http://localhost:8080       - custom base URL for binaries downloading
+  echo   - VERSION=0.1.7                            - archivist and cird version to install
+  echo   - CIRDL=true                               - install cirdl
+  echo   - "INSTALL_DIR=C:\Program Files\Archivist" - directory to install binaries
+  echo   - WINDOWS_LIBS=false                       - download and install archive without the libs
+  echo   - BASE_URL=http://localhost:8080           - custom base URL for binaries downloading
   exit /b 0
 )
 
@@ -105,7 +105,7 @@ exit /b 0
 :run
 
 :: Start
-call :show_start "Installing Codex..."
+call :show_start "Installing Archivist..."
 
 :: Version
 set message="Computing version"
@@ -119,11 +119,11 @@ set message="Computing archives and binaries names"
 call :show_progress %message%
 ::: Set variables
 if "%CIRDL%" == "true" (
-  set "ARCHIVES=%CODEX_ARCHIVE_PREFIX% %CIRDL_ARCHIVE_PREFIX%"
-  set "BINARIES=%CODEX_BINARY_PREFIX% %CIRDL_BINARY_PREFIX%"
+  set "ARCHIVES=%ARCHIVIST_ARCHIVE_PREFIX% %CIRDL_ARCHIVE_PREFIX%"
+  set "BINARIES=%ARCHIVIST_BINARY_PREFIX% %CIRDL_BINARY_PREFIX%"
 ) else (
-  set ARCHIVES=%CODEX_ARCHIVE_PREFIX%
-  set BINARIES=%CODEX_BINARY_PREFIX%
+  set ARCHIVES=%ARCHIVIST_ARCHIVE_PREFIX%
+  set BINARIES=%ARCHIVIST_BINARY_PREFIX%
 )
 
 :: Get the current OS

@@ -1,26 +1,27 @@
 #!/usr/bin/env bash
 set -e
 
-# Install Codex on Linux, macOS, and Windows (msys2)
+# Install Archivist on Linux, macOS, and Windows (msys2)
 
 # Variables
 VERSION=${VERSION:-latest}
 CIRDL=${CIRDL:-false}
 INSTALL_DIR=${INSTALL_DIR:-/usr/local/bin}
-CODEX_ARCHIVE_PREFIX="codex"
+ARCHIVIST_ARCHIVE_PREFIX="archivist"
 CIRDL_ARCHIVE_PREFIX="cirdl"
-CODEX_BINARY_PREFIX="codex"
+ARCHIVIST_BINARY_PREFIX="archivist"
 CIRDL_BINARY_PREFIX="cirdl"
 WINDOWS_LIBS=${WINDOWS_LIBS:-false}
 WINDOWS_LIBS_LIST="libstdc++-6.dll libgomp-1.dll libgcc_s_seh-1.dll libwinpthread-1.dll"
-BASE_URL=${BASE_URL:-https://github.com/codex-storage/nim-codex}
-API_BASE_URL="https://api.github.com/repos/codex-storage/nim-codex"
-BRANCH="${BRANCH:-master}"
+BASE_URL=${BASE_URL:-https://github.com/durability-labs/archivist-node}
+API_BASE_URL="https://api.github.com/repos/durability-labs/archivist-node"
+BRANCH="${BRANCH:-main}"
+DEFAULT_BRANCH="${DEFAULT_BRANCH:-${BRANCH}}"
 TEMP_DIR="${TEMP_DIR:-.}"
 PROGRESS_MARK="\033[0;36m\u2022\033[0m"
 PASS_MARK="\033[0;32m\u2714\033[0m"
 FAIL_MARK="\033[0;31m\u2718\033[0m"
-SCRIPT_URL="${SCRIPT_URL:-https://get.codex.storage/install.sh}"
+SCRIPT_URL="${SCRIPT_URL:-https://get.archivist.storage/install.sh}"
 
 # Debug
 if [[ "${DEBUG:-false}" == "true" ]]; then
@@ -38,7 +39,7 @@ fi
 if [[ $1 == *"help"* ]] ; then
   COMMAND="curl -s ${SCRIPT_URL}"
   echo -e "
-  \e[33mInstall Codex\e[0m\n
+  \e[33mInstall Archivist\e[0m\n
   \e[33mUsage:\e[0m
     ${COMMAND} | bash
     ${COMMAND} | VERSION=0.1.7 bash
@@ -46,12 +47,12 @@ if [[ $1 == *"help"* ]] ; then
     ${COMMAND} | bash -s help
 
   \e[33mVariables:\e[0m
-    - VERSION=0.1.7                         - codex and cird version to install
-    - CIRDL=true                            - install cirdl
-    - INSTALL_DIR=/usr/local/bin            - directory to install binaries
-    - WINDOWS_LIBS=true                     - download and install archive with libs for windows
-    - BASE_URL=https://builds.codex.storage - custom base URL for binaries downloading
-    - BRANCH=fix/custom-branch              - custom branch builds
+    - VERSION=0.1.7                             - archivist and cird version to install
+    - CIRDL=true                                - install cirdl
+    - INSTALL_DIR=/usr/local/bin                - directory to install binaries
+    - WINDOWS_LIBS=true                         - download and install archive with libs for windows
+    - BASE_URL=https://builds.archivist.storage - custom base URL for binaries downloading
+    - BRANCH=fix/custom-branch                  - custom branch builds
   "
   exit 0
 fi
@@ -81,7 +82,7 @@ show_end() {
 }
 
 # Start
-show_start "Installing Codex..."
+show_start "Installing Archivist..."
 
 # Version
 message="Compute version"
@@ -108,8 +109,8 @@ fi
 # Archives and binaries
 message="Compute archives and binaries names"
 show_progress "${message}"
-[[ "${CIRDL}" == "true" ]] && ARCHIVES=("${CODEX_ARCHIVE_PREFIX}" "${CIRDL_ARCHIVE_PREFIX}") || ARCHIVES=("${CODEX_ARCHIVE_PREFIX}")
-[[ "${CIRDL}" == "true" ]] && BINARIES=("${CODEX_BINARY_PREFIX}" "${CIRDL_BINARY_PREFIX}") || BINARIES=("${CODEX_BINARY_PREFIX}")
+[[ "${CIRDL}" == "true" ]] && ARCHIVES=("${ARCHIVIST_ARCHIVE_PREFIX}" "${CIRDL_ARCHIVE_PREFIX}") || ARCHIVES=("${ARCHIVIST_ARCHIVE_PREFIX}")
+[[ "${CIRDL}" == "true" ]] && BINARIES=("${ARCHIVIST_BINARY_PREFIX}" "${CIRDL_BINARY_PREFIX}") || BINARIES=("${ARCHIVIST_BINARY_PREFIX}")
 show_pass "${message}"
 
 # Get the current OS
@@ -165,7 +166,7 @@ for ARCHIVE in "${ARCHIVES[@]}"; do
     else
       if [[ "${BRANCH}" == "releases" ]]; then
         DOWNLOAD_URL="${BASE_URL}/${BRANCH}/${VERSION}/${FILE}"
-      elif [[ "${BRANCH}" == "master" ]]; then
+      elif [[ "${BRANCH}" == "${DEFAULT_BRANCH}" ]]; then
         DOWNLOAD_URL="${BASE_URL}/${BRANCH}/${FILE}"
       else
         DOWNLOAD_URL="${BASE_URL}/branches/${VERSION}/${FILE}"

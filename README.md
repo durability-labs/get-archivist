@@ -1,105 +1,105 @@
-## Get Codex
+## Get Archivist
 
 ### Linux, macOS and Windows (msys2)
 
 ```shell
 # latest version
-curl -s https://get.codex.storage/install.sh | bash
+curl -s https://get.archivist.storage/install.sh | bash
 ```
 
 ```shell
 # specific version
-curl -s https://get.codex.storage/install.sh | VERSION=0.1.7 bash
+curl -s https://get.archivist.storage/install.sh | VERSION=0.1.7 bash
 ```
 
 ```shell
-# latest codex and cirdl
-curl -s https://get.codex.storage/install.sh | CIRDL=true bash
+# latest archivist and cirdl
+curl -s https://get.archivist.storage/install.sh | CIRDL=true bash
 ```
 
 ```shell
-# codex and cirdl with required libraries on Windows with msys2
-curl -s https://get.codex.storage/install.sh | CIRDL=true WINDOWS_LIBS=true bash
+# archivist and cirdl with required libraries on Windows with msys2
+curl -s https://get.archivist.storage/install.sh | CIRDL=true WINDOWS_LIBS=true bash
 ```
 
 ```shell
 # help
-curl -s https://get.codex.storage/install.sh | bash -s help
+curl -s https://get.archivist.storage/install.sh | bash -s help
 ```
 
 ### Windows
 
 ```cmd
 :: latest version
-curl -sO https://get.codex.storage/install.cmd && install.cmd
+curl -sO https://get.archivist.storage/install.cmd && install.cmd
 ```
 
 ```cmd
 :: specific version
-curl -sO https://get.codex.storage/install.cmd && set VERSION=0.1.7 & install.cmd
+curl -sO https://get.archivist.storage/install.cmd && set VERSION=0.1.7 & install.cmd
 ```
 
 ```cmd
-:: latest codex and cirdl
-curl -sO https://get.codex.storage/install.cmd && set CIRDL=true & install.cmd
+:: latest archivist and cirdl
+curl -sO https://get.archivist.storage/install.cmd && set CIRDL=true & install.cmd
 ```
 
 ```cmd
-:: codex and cirdl without libraries
-curl -sO https://get.codex.storage/install.cmd && set CIRDL=true & set WINDOWS_LIBS=true & install.cmd
+:: archivist and cirdl without libraries
+curl -sO https://get.archivist.storage/install.cmd && set CIRDL=true & set WINDOWS_LIBS=true & install.cmd
 ```
 
 ```cmd
 :: help
-curl -sO https://get.codex.storage/install.cmd && install.cmd help
+curl -sO https://get.archivist.storage/install.cmd && install.cmd help
 ```
 
 
-## Join Codex Testnet
+## Join Archivist Testnet
 
 ### Linux, macOS and Windows (msys2)
 
 ```shell
 # Create a directory
-mkdir codex-testnet && cd codex-testnet
+mkdir archivist-testnet && cd archivist-testnet
 ```
 
 ```shell
-# Install Codex
-curl -s https://get.codex.storage/testnet/install.sh | bash
+# Install Archivist
+curl -s https://get.archivist.storage/testnet/install.sh | bash
 ```
 
 ```shell
 # Generate key
-curl -s https://get.codex.storage/testnet/generate.sh | bash
+curl -s https://get.archivist.storage/testnet/generate.sh | bash
 ```
 
 ```shell
-# Run Codex
-curl -s https://get.codex.storage/testnet/run.sh | bash
+# Run Archivist
+curl -s https://get.archivist.storage/testnet/run.sh | bash
 ```
 
 
-## Join Codex Devnet
+## Join Archivist Devnet
 
 ### Linux, macOS and Windows (msys2)
 
 ```shell
 # Create a directory
-mkdir codex-devnet && cd codex-devnet
+mkdir archivist-devnet && cd archivist-devnet
 ```
 
 ```shell
-# Install Codex
-curl -s https://get.codex.storage/devnet/install.sh | bash
+# Install Archivist
+curl -s https://get.archivist.storage/devnet/install.sh | bash
 ```
 
 ```shell
 # Generate key
-curl -s https://get.codex.storage/devnet/generate.sh | bash
+curl -s https://get.archivist.storage/devnet/generate.sh | bash
 ```
 
 ```shell
-# Run Codex
-curl -s https://get.codex.storage/devnet/run.sh | bash
+# Run Archivist
+curl -s https://get.archivist.storage/devnet/run.sh | bash
 ```

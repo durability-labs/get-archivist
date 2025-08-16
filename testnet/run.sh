@@ -1,11 +1,11 @@
-# Codex Testnet - Run
+# Archivist Testnet - Run
 
 # Variables
 set -a
-BASE_SCRIPT="https://get.codex.storage/run.sh"
-SCRIPT_URL="https://get.codex.storage/testnet/run.sh"
-CODEX_BINARY="${CODEX_BINARY:-./codex}"
-BOOTSTRAP_NODE_FROM_URL="https://spr.codex.storage/testnet"
+BASE_SCRIPT="https://get.archivist.storage/run.sh"
+SCRIPT_URL="https://get.archivist.storage/testnet/run.sh"
+ARCHIVIST_BINARY="${ARCHIVIST_BINARY:-./archivist}"
+BOOTSTRAP_NODE_FROM_URL="https://spr.archivist.storage/testnet"
 set +a
 
 # Help

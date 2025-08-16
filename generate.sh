@@ -6,12 +6,12 @@ set -e
 # Variables
 key_file="eth.key"
 address_file="eth.address"
-URL=${URL:-https://key.codex.storage}
+URL=${URL:-https://key.archivist.storage}
 MODE=${MODE:-remote}
 PROGRESS_MARK="\033[0;36m\u2022\033[0m"
 PASS_MARK="\033[0;32m\u2714\033[0m"
 FAIL_MARK="\033[0;31m\u2718\033[0m"
-SCRIPT_URL="${SCRIPT_URL:-https://get.codex.storage/generate.sh}"
+SCRIPT_URL="${SCRIPT_URL:-https://get.archivist.storage/generate.sh}"
 
 # Help
 if [[ $1 == *"help"* ]] ; then
@@ -22,13 +22,13 @@ if [[ $1 == *"help"* ]] ; then
     ${COMMAND} | bash
     ${COMMAND} | bash
     ${COMMAND} | MODE=local bash
-    ${COMMAND} | URL=https://key.codex.storage bash
+    ${COMMAND} | URL=https://key.archivist.storage bash
     ${COMMAND} | bash -s help
 
   \e[33mVariables:\e[0m
-    - MODE=local                    - Generate key locally
-    - ETH_PRIVATE_KEY=0x...         - Use provided private key
-    - URL=https://key.codex.storage - Key generation service URL
+    - MODE=local                        - Generate key locally
+    - ETH_PRIVATE_KEY=0x...             - Use provided private key
+    - URL=https://key.archivist.storage - Key generation service URL
   "
   exit 0
 fi

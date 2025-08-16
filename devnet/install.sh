@@ -1,11 +1,11 @@
-# Codex Devnet - Install
+# Archivist Devnet - Install
 
 # Variables
 set -a
-BASE_SCRIPT="https://get.codex.storage/install.sh"
-SCRIPT_URL="https://get.codex.storage/devnet/install.sh"
-BASE_URL="https://pub-4d2c3e46112947d5a108098a4758ae59.r2.dev"
-BRANCH="${BRANCH:-master}"
+BASE_SCRIPT="https://get.archivist.storage/install.sh"
+SCRIPT_URL="https://get.archivist.storage/devnet/install.sh"
+BASE_URL="https://builds.archivist.storage"
+BRANCH="${BRANCH:-main}"
 CIRDL="${CIRDL:-true}"
 INSTALL_DIR="${INSTALL_DIR:-.}"
 set +a
