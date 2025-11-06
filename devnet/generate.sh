@@ -2,8 +2,9 @@
 
 # Variables
 set -a
+NETWORK="devnet"
 BASE_SCRIPT="https://get.archivist.storage/generate.sh"
-SCRIPT_URL="https://get.archivist.storage/devnet/generate.sh"
+SCRIPT_URL="https://get.archivist.storage/${NETWORK}/generate.sh"
 set +a
 
 # Help

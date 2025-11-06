@@ -2,8 +2,9 @@
 
 # Variables
 set -a
+NETWORK="devnet"
 BASE_SCRIPT="https://get.archivist.storage/install.sh"
-SCRIPT_URL="https://get.archivist.storage/devnet/install.sh"
+SCRIPT_URL="https://get.archivist.storage/${NETWORK}/install.sh"
 BASE_URL="https://builds.archivist.storage"
 BRANCH="${BRANCH:-main}"
 CIRDL="${CIRDL:-true}"

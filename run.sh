@@ -14,7 +14,6 @@ SCRIPT_BASE_URL=$(sed 's|/[a-z]*\.[a-z]*$||'<<<"${SCRIPT_URL}")
 
 # Disable argument conversion to Windows path
 export MSYS_NO_PATHCONV=1
-
 export ARCHIVIST_DATA_DIR="${ARCHIVIST_DATA_DIR:-./archivist-data}"
 export ARCHIVIST_STORAGE_QUOTA="${ARCHIVIST_STORAGE_QUOTA:-10g}"
 export ARCHIVIST_NAT="${ARCHIVIST_NAT:-extip:$(curl -s https://ip.archivist.storage)}"
@@ -28,12 +27,15 @@ export ARCHIVIST_ETH_PRIVATE_KEY="${ARCHIVIST_ETH_PRIVATE_KEY:-eth.key}"
 export ARCHIVIST_ETH_PROVIDER="${ARCHIVIST_ETH_PROVIDER:-https://rpc.testnet.archivist.storage}"
 [[ -n "${ARCHIVIST_MARKETPLACE_ADDRESS}" ]] && export ARCHIVIST_MARKETPLACE_ADDRESS="${ARCHIVIST_MARKETPLACE_ADDRESS}"
 
+# Network
+NETWORK="${NETWORK:-testnet}"
+CONFIG_URL="${CONFIG_URL:-https://config.archivist.storage}"
+
 # Bootstrap node from URL
-BOOTSTRAP_NODE_FROM_URL="${BOOTSTRAP_NODE_FROM_URL:-https://spr.archivist.storage/testnet}"
-WAIT=60
+BOOTSTRAP_NODE_FROM_URL="${BOOTSTRAP_NODE_FROM_URL:-${CONFIG_URL}/${NETWORK}/spr}"
+WAIT=${BOOTSTRAP_NODE_FROM_URL_WAIT:-60}
 SECONDS=0
 SLEEP=1
-bootstrap_nodes=""
 while (( SECONDS < WAIT )); do
   set +e
   SPR=($(curl -s -f -m 5 "${BOOTSTRAP_NODE_FROM_URL}"))
@@ -51,7 +53,8 @@ done
 
 # Marketplace address from URL
 if [[ ( -z "${ARCHIVIST_MARKETPLACE_ADDRESS}" || "$@" != *"--marketplace-address"* ) && -n "${MARKETPLACE_ADDRESS_FROM_URL}" ]]; then
-  WAIT=60
+  eval MARKETPLACE_ADDRESS_FROM_URL="${MARKETPLACE_ADDRESS_FROM_URL}"
+  WAIT=${MARKETPLACE_ADDRESS_FROM_URL_WAIT:-60}
   SECONDS=0
   SLEEP=1
   while (( SECONDS < WAIT )); do
@@ -184,6 +187,7 @@ echo -e "   $@"
 
 # Run Archivist
 message="Running Archivist"
+echo
 show_progress "${message}" && show_pass "${message}\n"
 
 ${ARCHIVIST_BINARY} \
