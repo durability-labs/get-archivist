@@ -2,10 +2,11 @@
 
 # Variables
 set -a
+NETWORK="testnet"
 BASE_SCRIPT="https://get.archivist.storage/run.sh"
-SCRIPT_URL="https://get.archivist.storage/testnet/run.sh"
+SCRIPT_URL="https://get.archivist.storage/${NETWORK}/run.sh"
 ARCHIVIST_BINARY="${ARCHIVIST_BINARY:-./archivist}"
-BOOTSTRAP_NODE_FROM_URL="https://spr.archivist.storage/testnet"
+ARCHIVIST_ETH_PROVIDER="${ARCHIVIST_ETH_PROVIDER:-https://rpc.${NETWORK}.archivist.storage}"
 set +a
 
 # Help

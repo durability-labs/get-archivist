@@ -2,8 +2,9 @@
 
 # Variables
 set -a
+NETWORK="testnet"
 BASE_SCRIPT="https://get.archivist.storage/install.sh"
-SCRIPT_URL="https://get.archivist.storage/testnet/install.sh"
+SCRIPT_URL="https://get.archivist.storage/${NETWORK}/install.sh"
 INSTALL_DIR="${INSTALL_DIR:-.}"
 set +a
 
