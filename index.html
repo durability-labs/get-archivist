@@ -52,7 +52,7 @@
         <br>
 
         <h3>
-            Get Archivist - Windows
+            Get Archivist - Windows (cmd)
         </h3>
 
         <p>
@@ -76,7 +76,7 @@
                 :: latest archivist and cirdl
             </span>
             <br>
-                curl -sO https://get.archivist.storage/install.cmd && set CIRDL=true install.cmd
+                curl -sO https://get.archivist.storage/install.cmd && set CIRDL=true & install.cmd
         </p>
 
         <p>
@@ -85,6 +85,44 @@
             </span>
             <br>
                 curl -sO https://get.archivist.storage/install.cmd && set CIRDL=true & set WINDOWS_LIBS=false & install.cmd
+        </p>
+
+        <br>
+
+        <h3>
+            Get Archivist - Windows (PowerShell)
+        </h3>
+
+        <p>
+            <span style="color:grey;">
+                # latest version
+            </span>
+            <br>
+                curl.exe -sO https://get.Archivist.storage/install.cmd; cmd.exe /c install.cmd
+        </p>
+
+        <p>
+            <span style="color:grey;">
+                # specific version
+            </span>
+            <br>
+                curl.exe -sO https://get.archivist.storage/install.cmd; cmd.exe /c "set VERSION=0.1.7 & install.cmd"
+        </p>
+
+        <p>
+            <span style="color:grey;">
+                # latest archivist and cirdl
+            </span>
+            <br>
+                curl.exe -sO https://get.archivist.storage/install.cmd; cmd.exe /c "set CIRDL=true & install.cmd"
+        </p>
+
+        <p>
+            <span style="color:grey;">
+                # archivist and cirdl without libraries
+            </span>
+            <br>
+                curl.exe -sO https://get.archivist.storage/install.cmd; cmd.exe /c "set CIRDL=true & set WINDOWS_LIBS=false & install.cmd"
         </p>
     </body>
 </html>
