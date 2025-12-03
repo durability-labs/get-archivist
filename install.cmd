@@ -11,28 +11,16 @@ if defined VERSION (
   set VERSION=latest
 )
 
-if defined CIRDL (
-  for /l %%v in (1,1,100) do if "!CIRDL:~-1!"==" " set CIRDL=!CIRDL:~0,-1!
-) else (
-  set CIRDL=false
-)
-
 if defined INSTALL_DIR (
   for /l %%v in (1,1,100) do if "!INSTALL_DIR:~-1!"==" " set INSTALL_DIR=!INSTALL_DIR:~0,-1!
 ) else (
   set "INSTALL_DIR=%LOCALAPPDATA%\Archivist"
 )
 
-set ARCHIVIST_ARCHIVE_PREFIX=archivist
-set CIRDL_ARCHIVE_PREFIX=cirdl
+set ARTIFACTS_ARCHIVE_PREFIX=archivist
 set ARCHIVIST_BINARY_PREFIX=archivist
 set CIRDL_BINARY_PREFIX=cirdl
-
-if defined WINDOWS_LIBS (
-  for /l %%v in (1,1,100) do if "!WINDOWS_LIBS:~-1!"==" " set WINDOWS_LIBS=!WINDOWS_LIBS:~0,-1!
-) else (
-  set WINDOWS_LIBS=true
-)
+set SETUP_BINARY_PREFIX=setup
 
 if defined BASE_URL (
   for /l %%v in (1,1,100) do if "!BASE_URL:~-1!"==" " set BASE_URL=!BASE_URL:~0,-1!
@@ -58,16 +46,13 @@ if "%1" == "help" (
   set URL=https://get.archivist.storage/!SCRIPT_NAME!
   set "COMMAND=curl -sO !URL!"
   echo   !COMMAND! ^&^& !SCRIPT_NAME!
-  echo   !COMMAND! ^&^& set VERSION=0.1.7 ^& set CIRDL=true ^& !SCRIPT_NAME!
-  echo   !COMMAND! ^&^& set VERSION=0.1.7 ^& set WINDOWS_LIBS=false ^& !SCRIPT_NAME!
-  echo   !COMMAND! ^&^& set VERSION=0.1.7 ^& set "INSTALL_DIR=C:\Program Files\Archivist" ^& !SCRIPT_NAME!
+  echo   !COMMAND! ^&^& set VERSION=0.2.0 ^& set "INSTALL_DIR=C:\Program Files\Archivist" ^& !SCRIPT_NAME!
   echo.
   echo %ESC%[93mVariables:%ESC%[%m
-  echo   - VERSION=0.1.7                            - archivist and cird version to install
-  echo   - CIRDL=true                               - install cirdl
-  echo   - "INSTALL_DIR=C:\Program Files\Archivist" - directory to install binaries
-  echo   - WINDOWS_LIBS=false                       - download and install archive without the libs
-  echo   - BASE_URL=http://localhost:8080           - custom base URL for binaries downloading
+  echo   - VERSION=0.2.0                             - archivist binaries version to install
+  echo   - "INSTALL_DIR=C:\Program Files\Archivist"  - directory to install binaries
+  echo   - BASE_URL=https://builds.archivist.storage - custom base URL for binaries downloading
+  echo   - TEMP_DIR=C:\Temp                          - temporary directory for download and extraction
   exit /b 0
 )
 
@@ -117,14 +102,9 @@ if "%VERSION%" == "latest" (
 :: Archives and binaries
 set message="Computing archives and binaries names"
 call :show_progress %message%
-::: Set variables
-if "%CIRDL%" == "true" (
-  set "ARCHIVES=%ARCHIVIST_ARCHIVE_PREFIX% %CIRDL_ARCHIVE_PREFIX%"
-  set "BINARIES=%ARCHIVIST_BINARY_PREFIX% %CIRDL_BINARY_PREFIX%"
-) else (
-  set ARCHIVES=%ARCHIVIST_ARCHIVE_PREFIX%
-  set BINARIES=%ARCHIVIST_BINARY_PREFIX%
-)
+:: Set variables
+set "ARCHIVES=%ARTIFACTS_ARCHIVE_PREFIX%"
+set "BINARIES=%ARCHIVIST_BINARY_PREFIX% %CIRDL_BINARY_PREFIX% %SETUP_BINARY_PREFIX%"
 
 :: Get the current OS
 set message="Checking the current OS"
@@ -133,7 +113,7 @@ set OS=windows
 for /f "tokens=4-5 delims=. " %%i in ('ver') do set OS_VER=%%i.%%j
 for /f "skip=1 tokens=*" %%a in ('wmic os get caption ^| findstr /r /v "^$"') do set "OS_NAME=%%a"
 
-::: Not supported
+:: Not supported
 if not "%OS_VER%" == "10.0" (
   call :show_fail %message% "Unsupported OS - %OS_NAME%"
   goto :delete
@@ -143,21 +123,16 @@ if not "%OS_VER%" == "10.0" (
 set message="Checking the current architecture"
 call :show_progress %message%
 if "%PROCESSOR_ARCHITECTURE%" == "AMD64" (set ARCHITECTURE=amd64) else (set ARCHITECTURE=arm64)
+set ARCHITECTURE=amd64
 
-::: Not supported
+:: Not supported
 if not "%ARCHITECTURE%" == "amd64" (
   call :show_fail %message% "Unsupported architecture - %PROCESSOR_ARCHITECTURE%"
   goto :delete
 )
 
-:: Archive and binaries names
-if "%WINDOWS_LIBS%" == "true" (
-  set ARCHIVE_SUFFIX=%VERSION%-%OS%-%ARCHITECTURE%-libs.zip
-  set BINARY_SUFFIX=%VERSION%-%OS%-%ARCHITECTURE%
-) else (
-  set ARCHIVE_SUFFIX=%VERSION%-%OS%-%ARCHITECTURE%.zip
-  set BINARY_SUFFIX=%VERSION%-%OS%-%ARCHITECTURE%
-)
+:: Archives names
+set ARCHIVE_SUFFIX=%VERSION%-%OS%-%ARCHITECTURE%.zip
 
 :: Download
 for %%f in (%ARCHIVES%) do (
@@ -194,7 +169,7 @@ for %%f in (%ARCHIVES%) do (
   for /f "delims=" %%f in ('certUtil -hashfile !ARCHIVE_NAME! SHA256 ^| find /v ":"') do set "ACTUAL_HASH=%%f"
   for /f "tokens=1" %%f in (!ARCHIVE_NAME!.sha256) do set EXPECTED_HASH=%%f
   if not "!ACTUAL_HASH!" == "!EXPECTED_HASH!" (
-    call :show_fail !message! "Checksum verification failed for !ARCHIVE_NAME!. Expected: !EXPECTED_HASH!, Got: !ACTUAL_HASH!"
+    call :show_fail !message! "Checksum verification failed for !ARCHIVE_NAME!. Expected: !EXPECTED_HASH!, got: !ACTUAL_HASH!"
     goto :delete
   )
 )
@@ -203,19 +178,19 @@ for %%f in (%ARCHIVES%) do (
 set message="Creating installation directory %INSTALL_DIR%"
 call :show_progress !message!
 if not exist %INSTALL_DIR% mkdir %INSTALL_DIR%
-if not !errorlevel! == 0 (
+if !errorlevel! neq 0 (
   call :show_fail !message! "Failed to create %INSTALL_DIR%"
   goto :delete
 )
 
-:: Extract
+:: Extract/Install
 for %%f in (%ARCHIVES%) do (
   set ARCHIVE=%%f
   set ARCHIVE_NAME=!ARCHIVE!-%ARCHIVE_SUFFIX%
   set message="Extracting !ARCHIVE_NAME! to %INSTALL_DIR%"
   call :show_progress !message!
   tar -xf !ARCHIVE_NAME! -C %INSTALL_DIR%
-  if not !errorlevel! == 0 (
+  if !errorlevel! neq 0 (
     call :show_fail !message! "Failed to extract !ARCHIVE_NAME!"
     goto :delete
   )
@@ -224,18 +199,32 @@ for %%f in (%ARCHIVES%) do (
 :: Rename
 for %%f in (%BINARIES%) do (
   set BINARY=%%f
-  set BINARY_NAME=!BINARY!-%BINARY_SUFFIX%
-  set message="Renaming !BINARY_NAME!.exe to !BINARY!.exe"
-  call :show_progress !message!
-  move /Y "%INSTALL_DIR%\!BINARY_NAME!.exe" "%INSTALL_DIR%\!BINARY!.exe" >nul
-  if not !errorlevel! == 0 (
-    call :show_fail !message! "Failed to rename %INSTALL_DIR%\!BINARY_NAME!.exe to %INSTALL_DIR%\!BINARY!.exe"
+  set BINARY_NAME=!BINARY!
+  if not "!BINARY_NAME!" == "%ARCHIVIST_BINARY_PREFIX%" (
+    set BINARY_NAME=%ARCHIVIST_BINARY_PREFIX%-!BINARY_NAME!
+    set message="Renaming !BINARY!.exe to !BINARY_NAME!.exe"
+    call :show_progress !message!
+    move /Y "%INSTALL_DIR%\!BINARY!.exe" "%INSTALL_DIR%\!BINARY_NAME!.exe" >nul
+    echo "!errorlevel!: !errorlevel!"
+    if !errorlevel! neq 0 (
+      call :show_fail !message! "Failed to rename %INSTALL_DIR%\!BINARY!.exe to %INSTALL_DIR%\!BINARY_NAME!.exe"
+      goto :delete
+    )
   )
 )
 
 :: Cleanup
 set message="Cleanup"
 call :show_progress %message%
+for %%f in (%BINARIES%) do (
+  set BINARY=%%f
+  set BINARY_NAME=!BINARY!.exe
+  del /Q %TEMP_DIR%\!BINARY_NAME!
+  if !errorlevel! neq 0 (
+    call :show_fail !message! "Failed to delete %TEMP_DIR%\!BINARY_NAME!"
+    goto :delete
+  )
+)
 for %%f in (%ARCHIVES%) do (
   set ARCHIVE=%%f
   set ARCHIVE_NAME=!ARCHIVE!-!ARCHIVE_SUFFIX!
@@ -252,7 +241,7 @@ call :show_end "Setup completed successfully!"
 
 :: Set PATH
 echo %PATH% | find /i "%INSTALL_DIR%" >nul
-if not %errorlevel% equ 0 (
+if %errorlevel% neq 0 (
   echo %ESC%[93m Update current session PATH:%ESC%[%m
   echo  set "PATH=%%PATH%%%INSTALL_DIR%;"
   echo.
