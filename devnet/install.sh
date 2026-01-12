@@ -7,7 +7,6 @@ BASE_SCRIPT="https://get.archivist.storage/install.sh"
 SCRIPT_URL="https://get.archivist.storage/${NETWORK}/install.sh"
 BASE_URL="https://builds.archivist.storage"
 BRANCH="${BRANCH:-main}"
-CIRDL="${CIRDL:-true}"
 INSTALL_DIR="${INSTALL_DIR:-.}"
 set +a
 

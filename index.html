@@ -30,23 +30,15 @@
                 # specific version
             </span>
             <br>
-                curl -s https://get.archivist.storage/install.sh | VERSION=0.1.7 bash
+                curl -s https://get.archivist.storage/install.sh | VERSION=0.2.0 bash
         </p>
 
         <p>
             <span style="color:grey;">
-                # latest archivist and cirdl
+                # help
             </span>
             <br>
-                curl -s https://get.archivist.storage/install.sh | CIRDL=true bash
-        </p>
-
-        <p>
-            <span style="color:grey;">
-                # archivist and cirdl with required libraries on Windows with msys2
-            </span>
-            <br>
-                curl -s https://get.archivist.storage/install.sh | CIRDL=true WINDOWS_LIBS=true bash
+                curl -s https://get.archivist.storage/install.sh | bash -s help
         </p>
 
         <br>
@@ -68,23 +60,15 @@
                 :: specific version
             </span>
             <br>
-                curl -sO https://get.archivist.storage/install.cmd && set VERSION=0.1.7 & install.cmd
+                curl -sO https://get.archivist.storage/install.cmd && set VERSION=0.2.0 & install.cmd
         </p>
 
         <p>
             <span style="color:grey;">
-                :: latest archivist and cirdl
+                :: help
             </span>
             <br>
-                curl -sO https://get.archivist.storage/install.cmd && set CIRDL=true & install.cmd
-        </p>
-
-        <p>
-            <span style="color:grey;">
-                :: archivist and cirdl without libraries
-            </span>
-            <br>
-                curl -sO https://get.archivist.storage/install.cmd && set CIRDL=true & set WINDOWS_LIBS=false & install.cmd
+                curl.exe -sO https://get.archivist.storage/install.cmd; cmd /c "install.cmd help"
         </p>
 
         <br>
@@ -106,23 +90,7 @@
                 # specific version
             </span>
             <br>
-                curl.exe -sO https://get.archivist.storage/install.cmd; cmd.exe /c "set VERSION=0.1.7 & install.cmd"
-        </p>
-
-        <p>
-            <span style="color:grey;">
-                # latest archivist and cirdl
-            </span>
-            <br>
-                curl.exe -sO https://get.archivist.storage/install.cmd; cmd.exe /c "set CIRDL=true & install.cmd"
-        </p>
-
-        <p>
-            <span style="color:grey;">
-                # archivist and cirdl without libraries
-            </span>
-            <br>
-                curl.exe -sO https://get.archivist.storage/install.cmd; cmd.exe /c "set CIRDL=true & set WINDOWS_LIBS=false & install.cmd"
+                curl.exe -sO https://get.archivist.storage/install.cmd; cmd.exe /c "set VERSION=0.2.0 & install.cmd"
         </p>
     </body>
 </html>

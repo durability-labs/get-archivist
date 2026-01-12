@@ -5,14 +5,12 @@ set -e
 
 # Variables
 VERSION=${VERSION:-latest}
-CIRDL=${CIRDL:-false}
-INSTALL_DIR=${INSTALL_DIR:-/usr/local/bin}
-ARCHIVIST_ARCHIVE_PREFIX="archivist"
-CIRDL_ARCHIVE_PREFIX="cirdl"
+INSTALL_DIR=${INSTALL_DIR:-$HOME/.archivist/bin}
+ARTIFACTS_ARCHIVE_PREFIX="archivist"
 ARCHIVIST_BINARY_PREFIX="archivist"
 CIRDL_BINARY_PREFIX="cirdl"
-WINDOWS_LIBS=${WINDOWS_LIBS:-false}
-WINDOWS_LIBS_LIST="libstdc++-6.dll libgomp-1.dll libgcc_s_seh-1.dll libwinpthread-1.dll"
+SETUP_BINARY_PREFIX="setup"
+WINDOWS_LIBS_LIST="libgcc_s_seh-1.dll libwinpthread-1.dll"
 BASE_URL=${BASE_URL:-https://github.com/durability-labs/archivist-node}
 API_BASE_URL="https://api.github.com/repos/durability-labs/archivist-node"
 BRANCH="${BRANCH:-main}"
@@ -27,11 +25,10 @@ SCRIPT_URL="${SCRIPT_URL:-https://get.archivist.storage/install.sh}"
 if [[ "${DEBUG:-false}" == "true" ]]; then
   echo -e "\n \e[33mVariables:\e[0m"
   echo "  VERSION: ${VERSION}"
-  echo "  CIRDL: ${CIRDL}"
   echo "  INSTALL_DIR: ${INSTALL_DIR}"
   echo "  BRANCH: ${BRANCH}"
-  echo "  TEMP_DIR: ${TEMP_DIR}"
   echo "  BASE_URL: ${BASE_URL}"
+  echo "  TEMP_DIR: ${TEMP_DIR}"
   echo "  SCRIPT_URL: ${SCRIPT_URL}"
 fi
 
@@ -42,18 +39,15 @@ if [[ $1 == *"help"* ]] ; then
   \e[33mInstall Archivist\e[0m\n
   \e[33mUsage:\e[0m
     ${COMMAND} | bash
-    ${COMMAND} | VERSION=0.1.7 bash
-    ${COMMAND} | VERSION=0.1.7 CIRDL=true bash
+    ${COMMAND} | VERSION=0.2.0 bash
     ${COMMAND} | bash -s help
 
   \e[33mVariables:\e[0m
-    - VERSION=0.1.7                             - archivist and cird version to install
-    - CIRDL=true                                - install cirdl
+    - VERSION=0.2.0                             - archivist binaries version to install
     - INSTALL_DIR=/usr/local/bin                - directory to install binaries
-    - WINDOWS_LIBS=true                         - download and install archive with libs for windows
     - BASE_URL=https://builds.archivist.storage - custom base URL for binaries downloading
     - BRANCH=fix/custom-branch                  - custom branch builds
-  "
+    - TEMP_DIR=/tmp                             - temporary directory for download and extraction"
   exit 0
 fi
 
@@ -109,8 +103,8 @@ fi
 # Archives and binaries
 message="Compute archives and binaries names"
 show_progress "${message}"
-[[ "${CIRDL}" == "true" ]] && ARCHIVES=("${ARCHIVIST_ARCHIVE_PREFIX}" "${CIRDL_ARCHIVE_PREFIX}") || ARCHIVES=("${ARCHIVIST_ARCHIVE_PREFIX}")
-[[ "${CIRDL}" == "true" ]] && BINARIES=("${ARCHIVIST_BINARY_PREFIX}" "${CIRDL_BINARY_PREFIX}") || BINARIES=("${ARCHIVIST_BINARY_PREFIX}")
+ARCHIVES=("${ARTIFACTS_ARCHIVE_PREFIX}")
+BINARIES=("${ARCHIVIST_BINARY_PREFIX}" "${CIRDL_BINARY_PREFIX}" "${SETUP_BINARY_PREFIX}")
 show_pass "${message}"
 
 # Get the current OS
@@ -147,13 +141,12 @@ if [[ ("${OS}" != "windows") ]]; then
 fi
 show_pass "${message}"
 
-# Archive and binaries names
+# Archives names
+SUFFIX="${VERSION}-${OS}-${ARCHITECTURE}"
 if [[ "$OS" == "windows" ]]; then
-  [[ "${WINDOWS_LIBS}" == "true" ]] && ARCHIVE_SUFFIX="${VERSION}-${OS}-${ARCHITECTURE}-libs.zip" || ARCHIVE_SUFFIX="${VERSION}-${OS}-${ARCHITECTURE}.zip"
-  BINARY_SUFFIX="${VERSION}-${OS}-${ARCHITECTURE}"
+  ARCHIVE_SUFFIX="${SUFFIX}.zip"
 else
-  ARCHIVE_SUFFIX="${VERSION}-${OS}-${ARCHITECTURE}.tar.gz"
-  BINARY_SUFFIX="${VERSION}-${OS}-${ARCHITECTURE}"
+  ARCHIVE_SUFFIX="${SUFFIX}.tar.gz"
 fi
 
 # Download
@@ -196,7 +189,7 @@ for ARCHIVE in "${ARCHIVES[@]}"; do
   if [[ "$ACTUAL_SHA256" == "$EXPECTED_SHA256" ]]; then
     show_pass "${message}"
   else
-    show_fail "${message}" "Checksum verification failed for ${ARCHIVE_NAME}. Expected: $EXPECTED_SHA256, Got: $ACTUAL_SHA256"
+    show_fail "${message}" "Checksum verification failed for ${ARCHIVE_NAME}. Expected: $EXPECTED_SHA256, got: $ACTUAL_SHA256"
   fi
 done
 
@@ -224,8 +217,12 @@ done
 
 # Install
 for BINARY in "${BINARIES[@]}"; do
-  BINARY_NAME="${BINARY}-${BINARY_SUFFIX}"
-  INSTALL_PATH="${INSTALL_DIR}/${BINARY}"
+  BINARY_NAME="${BINARY}"
+  if [[ "${BINARY_NAME}" == "${ARCHIVIST_BINARY_PREFIX}" ]]; then
+    INSTALL_PATH="${INSTALL_DIR}/${BINARY}"
+  else
+    INSTALL_PATH="${INSTALL_DIR}/${ARCHIVIST_BINARY_PREFIX}-${BINARY}"
+  fi
 
   # Install
   message="Installing ${BINARY_NAME} to ${INSTALL_PATH}"
@@ -240,7 +237,7 @@ for BINARY in "${BINARIES[@]}"; do
 done
 
 # Windows libs
-if [[ "${OS}" == "windows" && "${WINDOWS_LIBS}" == "true" ]]; then
+if [[ "${OS}" == "windows" ]]; then
   message="Copy libs to ${MINGW_PREFIX}/bin"
   show_progress "${message}"
   for LIB in ${WINDOWS_LIBS_LIST}; do
@@ -253,7 +250,12 @@ fi
 message="Cleanup"
 show_progress "${message}"
 for BINARY in "${BINARIES[@]}"; do
-  ARCHIVE_NAME="${BINARY}-${BINARY_SUFFIX}"
+  BINARY_NAME="${BINARY}"
+  rm -f "${TEMP_DIR}/${BINARY_NAME}"
+  [[ $? -ne 0 ]] && show_fail "${message}"
+done
+for ARCHIVE in "${ARCHIVES[@]}"; do
+  ARCHIVE_NAME="${ARCHIVE}-${ARCHIVE_SUFFIX}"
   rm -f "${TEMP_DIR}/${ARCHIVE_NAME}"*
   [[ $? -ne 0 ]] && show_fail "${message}"
 done
@@ -278,6 +280,17 @@ if [[ ${#dependencies[@]} -ne 0 ]]; then
 fi
 
 # Path
+case ${SHELL} in
+  */bash) SHELL_PROFILE_FILE="$HOME/.bashrc"                  ;;
+  */zsh)  SHELL_PROFILE_FILE="$HOME/.zshrc"                   ;;
+  */fish) SHELL_PROFILE_FILE="$HOME/.config/fish/config.fish" ;;
+  *)      SHELL_PROFILE_FILE="$HOME/.profile"                 ;;
+esac
+
 if [[ "${INSTALL_DIR}" != "." && "${PATH}" != *"${INSTALL_DIR}"* ]]; then
-  echo -e " Note: Please add install directory '"${INSTALL_DIR}"' to your PATH\n"
+  echo -e " \e[33mNote: Please add install directory to your PATH\e[0m"
+  echo -e "   Permanently to your shell profile:
+          \e[0m\e[94mecho 'export PATH=\"\$PATH:${INSTALL_DIR}\"' >> ${SHELL_PROFILE_FILE}\e[0m\n"
+  echo -e "   Current session only:
+          \e[0m\e[94mexport PATH=\"\$PATH:${INSTALL_DIR}\"\e[0m\n"
 fi

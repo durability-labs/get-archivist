@@ -9,17 +9,7 @@ curl -s https://get.archivist.storage/install.sh | bash
 
 ```shell
 # specific version
-curl -s https://get.archivist.storage/install.sh | VERSION=0.1.7 bash
-```
-
-```shell
-# latest archivist and cirdl
-curl -s https://get.archivist.storage/install.sh | CIRDL=true bash
-```
-
-```shell
-# archivist and cirdl with required libraries on Windows with msys2
-curl -s https://get.archivist.storage/install.sh | CIRDL=true WINDOWS_LIBS=true bash
+curl -s https://get.archivist.storage/install.sh | VERSION=0.2.0 bash
 ```
 
 ```shell
@@ -36,17 +26,7 @@ curl -sO https://get.archivist.storage/install.cmd && install.cmd
 
 ```cmd
 :: specific version
-curl -sO https://get.archivist.storage/install.cmd && set VERSION=0.1.7 & install.cmd
-```
-
-```cmd
-:: latest archivist and cirdl
-curl -sO https://get.archivist.storage/install.cmd && set CIRDL=true & install.cmd
-```
-
-```cmd
-:: archivist and cirdl without libraries
-curl -sO https://get.archivist.storage/install.cmd && set CIRDL=true & set WINDOWS_LIBS=true & install.cmd
+curl -sO https://get.archivist.storage/install.cmd && set VERSION=0.2.0 & install.cmd
 ```
 
 ```cmd
@@ -63,17 +43,7 @@ curl.exe -sO https://get.archivist.storage/install.cmd; cmd.exe /c install.cmd
 
 ```powershell
 # specific version
-curl.exe -sO https://get.archivist.storage/install.cmd; cmd.exe /c "set VERSION=0.1.7 & install.cmd"
-```
-
-```powershell
-# latest archivist and cirdl
-curl.exe -sO https://get.archivist.storage/install.cmd; cmd.exe /c "set CIRDL=true & install.cmd"
-```
-
-```powershell
-# archivist and cirdl without libraries
-curl.exe -sO https://get.archivist.storage/install.cmd; cmd.exe /c "set CIRDL=true & set WINDOWS_LIBS=false & install.cmd"
+curl.exe -sO https://get.archivist.storage/install.cmd; cmd.exe /c "set VERSION=0.2.0 & install.cmd"
 ```
 
 ```powershell
