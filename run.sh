@@ -23,6 +23,7 @@ export ARCHIVIST_LISTEN_ADDRS="${ARCHIVIST_LISTEN_ADDRS:-/ip4/0.0.0.0/tcp/8070}"
 export ARCHIVIST_API_CORS_ORIGIN="${ARCHIVIST_API_CORS_ORIGIN:-*}"
 export ARCHIVIST_BLOCK_TTL="${ARCHIVIST_BLOCK_TTL:-30d}"
 export ARCHIVIST_LOG_LEVEL="${ARCHIVIST_LOG_LEVEL:-info}"
+export ARCHIVIST_PERSISTENCE="${ARCHIVIST_PERSISTENCE: true}"
 export ARCHIVIST_ETH_PRIVATE_KEY="${ARCHIVIST_ETH_PRIVATE_KEY:-eth.key}"
 export ARCHIVIST_ETH_PROVIDER="${ARCHIVIST_ETH_PROVIDER:-https://rpc.testnet.archivist.storage}"
 [[ -n "${ARCHIVIST_MARKETPLACE_ADDRESS}" ]] && export ARCHIVIST_MARKETPLACE_ADDRESS="${ARCHIVIST_MARKETPLACE_ADDRESS}"
@@ -93,6 +94,7 @@ if [[ $1 == *"help"* ]] ; then
     - ARCHIVIST_API_CORS_ORIGIN     - The REST Api CORS allowed origin for downloading data [=*].
     - ARCHIVIST_BLOCK_TTL           - Default block timeout in seconds - 0 disables the ttl [=30d].
     - ARCHIVIST_LOG_LEVEL           - Sets the log level [=info].
+    - ARCHIVIST_PERSISTENCE         - Enables marketplace persistence. Requires 'eth-provider' option to be set [=false].
     - ARCHIVIST_ETH_PRIVATE_KEY     - File containing Ethereum private key for storage contracts.
     - ARCHIVIST_ETH_PROVIDER        - The URL of the JSON-RPC API of the Ethereum node [=https://rpc.testnet.archivist.storage].
     - ARCHIVIST_MARKETPLACE_ADDRESS - Address of deployed Marketplace contract.
@@ -190,6 +192,4 @@ message="Running Archivist"
 echo
 show_progress "${message}" && show_pass "${message}\n"
 
-${ARCHIVIST_BINARY} \
-  persistence \
-  $@
+${ARCHIVIST_BINARY} $@
