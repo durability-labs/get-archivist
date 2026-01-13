@@ -51,7 +51,7 @@ if [[ $1 == *"help"* ]] ; then
   exit 0
 fi
 
-# Show
+# Functions
 show_start() {
   echo -e "\n \e[33m${1}\e[0m\n"
 }
@@ -73,6 +73,15 @@ show_fail() {
 
 show_end() {
   echo -e "\n\e[32m ${1}\e[0m\n"
+}
+
+install_path() {
+  BINARY_NAME="${1}"
+  if [[ "${BINARY_NAME}" == "${ARCHIVIST_BINARY_PREFIX}" ]]; then
+    INSTALL_PATH="${INSTALL_DIR}/${BINARY}"
+  else
+    INSTALL_PATH="${INSTALL_DIR}/${ARCHIVIST_BINARY_PREFIX}-${BINARY}"
+  fi
 }
 
 # Start
@@ -218,20 +227,18 @@ done
 # Install
 for BINARY in "${BINARIES[@]}"; do
   BINARY_NAME="${BINARY}"
-  if [[ "${BINARY_NAME}" == "${ARCHIVIST_BINARY_PREFIX}" ]]; then
-    INSTALL_PATH="${INSTALL_DIR}/${BINARY}"
-  else
-    INSTALL_PATH="${INSTALL_DIR}/${ARCHIVIST_BINARY_PREFIX}-${BINARY}"
-  fi
+  install_path "${BINARY_NAME}"
 
   # Install
   message="Installing ${BINARY_NAME} to ${INSTALL_PATH}"
   show_progress "${message}"
   [[ -d "${INSTALL_PATH}" ]] && show_fail "${message}" "Installation path ${INSTALL_PATH} is a directory"
-  if ! (mkdir -p "${INSTALL_DIR}" && install -m 755 "${TEMP_DIR}/${BINARY_NAME}" "${INSTALL_PATH}") 2> /dev/null; then
-    $(sudo -n true 2>/dev/null) || TRIM=2
-    sudo mkdir -p "${INSTALL_DIR}" && sudo install -m 755 "${TEMP_DIR}/${BINARY_NAME}" "${INSTALL_PATH}"
-    [[ $? -ne 0 ]] && show_fail "${message}"
+  if [[ "${TEMP_DIR}/${BINARY_NAME}" != "${INSTALL_PATH}" ]]; then
+    if ! (mkdir -p "${INSTALL_DIR}" && install --compare --mode 755 "${TEMP_DIR}/${BINARY_NAME}" "${INSTALL_PATH}") 2> /dev/null; then
+      $(sudo -n true 2>/dev/null) || TRIM=2
+      sudo mkdir -p "${INSTALL_DIR}" && sudo install --compare --mode 755 "${TEMP_DIR}/${BINARY_NAME}" "${INSTALL_PATH}"
+      [[ $? -ne 0 ]] && show_fail "${message}"
+    fi
   fi
   show_pass "${message}"
 done
@@ -251,8 +258,12 @@ message="Cleanup"
 show_progress "${message}"
 for BINARY in "${BINARIES[@]}"; do
   BINARY_NAME="${BINARY}"
-  rm -f "${TEMP_DIR}/${BINARY_NAME}"
-  [[ $? -ne 0 ]] && show_fail "${message}"
+  install_path "${BINARY_NAME}"
+
+  if [[ "${TEMP_DIR}/${BINARY_NAME}" != "${INSTALL_PATH}" ]]; then
+    rm -f "${TEMP_DIR}/${BINARY_NAME}"
+    [[ $? -ne 0 ]] && show_fail "${message}"
+  fi
 done
 for ARCHIVE in "${ARCHIVES[@]}"; do
   ARCHIVE_NAME="${ARCHIVE}-${ARCHIVE_SUFFIX}"
@@ -267,10 +278,12 @@ show_end "Setup completed successfully!"
 # Dependencies
 dependencies=()
 for BINARY in "${BINARIES[@]}"; do
-  LOCATION="${INSTALL_DIR}/${BINARY}"
+  BINARY_NAME="${BINARY}"
+  install_path "${BINARY_NAME}"
+
   case "${OS}" in
-    linux)  dependencies+=($(ldd "${LOCATION}" | awk '/not found/ {print $1}'))      ;;
-    darwin) dependencies+=($(otool -L "${LOCATION}" | awk '/not found/ {print $1}')) ;;
+    linux)  dependencies+=($(ldd "${INSTALL_PATH}" | awk '/not found/ {print $1}'))      ;;
+    darwin) dependencies+=($(otool -L "${INSTALL_PATH}" | awk '/not found/ {print $1}')) ;;
   esac
 done
 

@@ -58,7 +58,7 @@ if "%1" == "help" (
 
 goto :run
 
-:: Show
+:: Functions
 :show_start
 echo.
 echo  %~1
