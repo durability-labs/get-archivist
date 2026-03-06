@@ -234,9 +234,9 @@ for BINARY in "${BINARIES[@]}"; do
   show_progress "${message}"
   [[ -d "${INSTALL_PATH}" ]] && show_fail "${message}" "Installation path ${INSTALL_PATH} is a directory"
   if [[ "${TEMP_DIR}/${BINARY_NAME}" != "${INSTALL_PATH}" ]]; then
-    if ! (mkdir -p "${INSTALL_DIR}" && install --compare --mode 755 "${TEMP_DIR}/${BINARY_NAME}" "${INSTALL_PATH}") 2> /dev/null; then
+    if ! (mkdir -p "${INSTALL_DIR}" && install -C -m 755 "${TEMP_DIR}/${BINARY_NAME}" "${INSTALL_PATH}") 2> /dev/null; then
       $(sudo -n true 2>/dev/null) || TRIM=2
-      sudo mkdir -p "${INSTALL_DIR}" && sudo install --compare --mode 755 "${TEMP_DIR}/${BINARY_NAME}" "${INSTALL_PATH}"
+      sudo mkdir -p "${INSTALL_DIR}" && sudo install -C -m 755 "${TEMP_DIR}/${BINARY_NAME}" "${INSTALL_PATH}"
       [[ $? -ne 0 ]] && show_fail "${message}"
     fi
   fi
